@@ -1,0 +1,4 @@
+inter (nerd fonts)
+geist (nerd fonts)
+jetbrains (nerd fonts)
+fira code (iscript) (nerd fonts)

@@ -1,0 +1,10 @@
+{
+   "Packages": [
+      "dart-sdk",
+      "elixir",
+      "flutter",
+      "httpie",
+      "ninja"
+   ],
+   "Ignore": []
+}
