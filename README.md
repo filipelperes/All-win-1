@@ -2,15 +2,15 @@
 #### The last tweaker tool you'll ever need. Simplify your life with :rocket: All-win-1 :rocket:
 :rocket: **All-win-1** :rocket: is a PowerShell-based tool designed to simplify your Windows experience.
 
-- [Optional Prerequisites](#-optional-prerequisites)
-- [How to Get Started](#-how-to-get-started)
-- [How to Use](#-how-to-use-)
-- [Extra](#-extra)
-- [Contribute & Support](#-contribute--support)
+- [Optional Prerequisites](#optional-prerequisites)
+- [How to Get Started](#how-to-get-started)
+- [How to Use](#how-to-use)
+- [Extra](#extra)
+- [Contribute & Support](#contribute-support)
 
 ---
 
-## :wrench: Optional Prerequisites
+## :wrench: Optional Prerequisites <a id="optional-prerequisites"></a>
 
 ##### :four_leaf_clover: Winrar: Run the command below in PowerShell to install (if you don't have it):
 ```powershell
@@ -24,7 +24,7 @@ winget install --id Git.Git --accept-package-agreements
 
 ---
 
-## :checkered_flag: How to Get Started
+## :checkered_flag: How to Get Started <a id="how-to-get-started"></a>
 #### :inbox_tray: **1. Download or clone:**
    * :pushpin: **Manual Download:**
       * Click the "Code" (green) button on the GitHub repository.
@@ -52,20 +52,22 @@ winget install --id Git.Git --accept-package-agreements
 
 ---
 
-## :question: How to Use :question:
+## :question: How to Use :question: <a id="how-to-use"></a>
 
 **Once the script main.ps1 is executed, you should see a menu-driven interface (or a series of prompts) that allows you to select different tweaking options. Follow the on-screen instructions to explore the available features.**
 
 **Most features have been tested and are working well, but if you encounter any issues, feel free to report them.**
 
+**Check the `globals.ps1` file to adjust settings for import a file, or directly edit the data in the `data` directory as needed.**
+
 ---
 
-### :hammer_and_wrench: Extra
+### :hammer_and_wrench: Extra <a id="extra"></a>
 **For Fish Shell With Starship on Windows Git Bash check out [this guide](https://gist.github.com/filipelperes/212abbfd422b4f3c77a04a26f4729c4c) or use the option in the 4devs menu.**
 
 ---
 
-### :loudspeaker: Contribute & Support
+### :loudspeaker: Contribute & Support <a id="contribute-support"></a>
 :busts_in_silhouette: **Contributions are welcome!**
 
    * **Submit a Pull Request to improve the code.**
