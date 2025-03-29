@@ -12,46 +12,56 @@ function IsNumber {
 function Get-IterableObject {
     param ($obj)
 
-    if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { return $obj.GetEnumerator() }
-    elseif ($obj -is [PSCustomObject]) { return $obj.PSObject.Properties }
-    elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (IsNumber -value $obj)) { return $obj }
-    else { return $null }
+    return $(
+        if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { $obj.GetEnumerator() }
+        elseif ($obj -is [PSCustomObject]) { $obj.PSObject.Properties }
+        elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (IsNumber -value $obj)) { $obj }
+        else { $null }
+    )
 }
 
 function Get-KeysValuesPair {
     param ($obj)
 
-    if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { return @{ Keys = $obj.Keys; Values = $obj.Values } }
-    elseif ($obj -is [PSCustomObject]) { return @{ Keys = $obj.PSObject.Properties.Name; Values = $obj.PSObject.Properties.Value } }
-    else { return @{ Keys = $null; Values = $obj } }
+    return $(
+        if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { @{ Keys = $obj.Keys; Values = $obj.Values } }
+        elseif ($obj -is [PSCustomObject]) { @{ Keys = $obj.PSObject.Properties.Name; Values = $obj.PSObject.Properties.Value } }
+        else { @{ Keys = $null; Values = $obj } }
+    )
 }
 
 function Get-Keys {
     param ($obj)
 
-    if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { return $obj.Keys }
-    elseif ($obj -is [PSCustomObject]) { return $obj.PSObject.Properties.Name }
-    else { return $null }
+    return $(
+        if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { $obj.Keys }
+        elseif ($obj -is [PSCustomObject]) { $obj.PSObject.Properties.Name }
+        else { $null }
+    )
 }
 
 function GetItemKeyValuePair {
     param ($item)
 
-    switch ($item.GetType().Name) {
-        "PSNoteProperty" { return @{ Key = $item.Name; Value = $item.Value } } #PSCustomObject
-        "DictionaryEntry" { return @{ Key = $item.Key; Value = $item.Value } } #hashtable
-        default { return @{ Key = $null; Value = $item } }
-    }
+    return $(
+        switch ($item.GetType().Name) {
+            "PSNoteProperty" { @{ Key = $item.Name; Value = $item.Value } } #PSCustomObject
+            "DictionaryEntry" { @{ Key = $item.Key; Value = $item.Value } } #hashtable
+            default { @{ Key = $null; Value = $item } }
+        }
+    )
 }
 
 function GetItemKey {
     param ($item)
 
-    switch ($item.GetType().Name) {
-        "PSNoteProperty" { return $item.Name } #PSCustomObject
-        "DictionaryEntry" { return $item.Key } #hashtable
-        default { return $null }
-    }
+    return $(
+        switch ($item.GetType().Name) {
+            "PSNoteProperty" { $item.Name } #PSCustomObject
+            "DictionaryEntry" { $item.Key } #hashtable
+            default { $null }
+        }
+    )
 }
 
 function Get-KeyByValue {
@@ -67,26 +77,32 @@ function Get-KeyByValue {
 function Get-Values {
     param ($obj)
 
-    if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { return $obj.Values }
-    elseif ($obj -is [PSCustomObject]) { return $obj.PSObject.Properties.Value }
-    elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (IsNumber -value $obj)) { return $obj }
-    else { return $null }
+    return $(
+        if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { $obj.Values }
+        elseif ($obj -is [PSCustomObject]) { $obj.PSObject.Properties.Value }
+        elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (IsNumber -value $obj)) { $obj }
+        else { $null }
+    )
 }
 
 function GetItemValue {
     param ($item)
 
-    if ($null -ne $item.GetType().Name -and $item.GetType().Name -in @("PSNoteProperty", "DictionaryEntry")) { return $item.Value }
-    else { return $item }
+    return $(
+        if ($null -ne $item.GetType().Name -and $item.GetType().Name -in @("PSNoteProperty", "DictionaryEntry")) { $item.Value }
+        else { $item }
+    )
 }
 
 function CreateResult {
     param ( $obj )
 
-    if ($obj -is [PSCustomObject]) { return [PSCustomObject]@{} }
-    elseif ($obj -is [hashtable]) { return @{} }
-    elseif ($obj -is [System.Collections.Specialized.OrderedDictionary]) { return [ordered]@{} }
-    elseif ($obj -is [array] -or $obj -is [object[]]) { return @() }
+    return $(
+        if ($obj -is [PSCustomObject]) { [PSCustomObject]@{} }
+        elseif ($obj -is [hashtable]) { @{} }
+        elseif ($obj -is [System.Collections.Specialized.OrderedDictionary]) { [ordered]@{} }
+        elseif ($obj -is [array] -or $obj -is [object[]]) { @() }
+    )
 }
 
 function Add-ToResult {
@@ -180,23 +196,29 @@ function CompareByRecursive {
     The PrintOnScreen function recursively prints any type of data, with indentation to show the structure.
 #>
 function PrintOnScreen {
-    param ( $obj )
-    PrintOnScreenRecursive -obj $obj
+    param ( $obj, [switch]$wget )
+    PrintOnScreenRecursive -obj $obj -wget:$wget
 }
 
 function PrintOnScreenRecursive {
-    param ( $obj, [int]$depth = 0 )
+    param ( $obj, [int]$depth = 0, [switch]$wget )
 
     if ($null -eq $obj) { return }
+    $msStorePattern = '^((9|X)[A-Z0-9]+)$'
 
     engaging -obj $obj -processItem {
         param ( $item, $k, $v )
         $indent = "    " * $depth
 
+        $v = if ($wget -and $v -is [string] -and $v -match $msStorePattern) { ((GetPackageName -package $v -line) -replace "Found ", '') } else { $v }
+
         Write-Output (
             "{0}{1}" -f
             $indent,
-            $( if ($null -ne $k) { "$k = $v" } else { $v } )
+            $(
+                if ($null -ne $k) { "$k$(if (-not (IsIterable $v) -and $null -ne $v) { " = $v" })" }
+                else { $v }
+            )
             # "Item: {0}        Type: {1}`nName: {2}        Type: {3}`nKey: {4}        Type: {5}`nValue: {6}    Type: {7}`n`n" -f
             # $( if ($null -eq $item) { "null" } else { $item } ), $( if ($null -eq $item) { "null" } else { $item.GetType().Name } ),
             # $( if ($null -eq $item.Name) { "null" } else { $item.Name } ), $( if ($null -eq $item.Name) { "null" } else { $item.Name.GetType() } ),
@@ -204,7 +226,7 @@ function PrintOnScreenRecursive {
             # $( if ($null -eq $item.Value) { "null" } else { $item.Value } ), $( if ($null -eq $item.Value) { "null" } else { $item.Value.GetType() } )
         )
 
-        if (IsIterable -obj $v) { PrintOnScreenRecursive -obj $v -depth ($depth + 1) }
+        if (IsIterable -obj $v) { PrintOnScreenRecursive -obj $v -depth ($depth + 1) -wget:$wget }
     }
 
     <#
@@ -217,10 +239,16 @@ function PrintOnScreenRecursive {
         $v = $ipair.Value
         $indent = "    " * $depth
 
+        $v = if ($wget -and $v -is [string] -and $v -match $msStorePattern) { ((GetPackageName -package $v -line) -replace "Found ", '') } else { $v }
+
+
         Write-Output (
             "{0}{1}" -f
             $indent,
-            $( if($null -ne $k) { "$k = $v" } else { $v } )
+            $(
+                if ($null -ne $k) { "$k$(if (-not (IsIterable $v) -and $null -ne $v) { " = $v" })" }
+                else { $v }
+            )
             #"Item: {0}        Type: {1}`nName: {2}        Type: {3}`nKey: {4}        Type: {5}`nValue: {6}    Type: {7}`n`n" -f
             #$( if ($null -eq $_) { "null" } else { $_ } ), $( if ($null -eq $_) { "null" } else { $_.GetType().Name } ),
             #$( if ($null -eq $_.Name) { "null" } else { $_.Name } ), $( if ($null -eq $_.Name) { "null" } else { $_.Name.GetType() } ),
@@ -228,7 +256,7 @@ function PrintOnScreenRecursive {
             #$( if ($null -eq $_.Value) { "null" } else { $_.Value } ), $( if ($null -eq $_.Value) { "null" } else { $_.Value.GetType() } )
         )
 
-        if(IsIterable -obj $v)  { PrintOnScreenRecursive -obj $v -depth ($depth + 1) }
+        if(IsIterable -obj $v)  { PrintOnScreenRecursive -obj $v -depth ($depth + 1) -wget:$wget }
     }
     #>
 }

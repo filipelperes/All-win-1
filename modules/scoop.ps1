@@ -8,7 +8,7 @@ function CheckScoop {
 }
 
 function Install-Scoop {
-   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
    Invoke-RestMethod -Uri "https://get.scoop.sh" | Invoke-Expression
 }
 
@@ -67,7 +67,7 @@ function InteractingWithScoopData {
       }
    }
 
-   Show-Menu -options $menuOptions -titleName $null -submenu
+   Show-Menu -options $menuOptions -title $null -submenu
    return
 }
 
@@ -80,7 +80,7 @@ else {
       Label       = "Scoop"
       Submenu     = @(
          [PSCustomObject]@{ Label = "Backup/Export Installed Packages" ; Action = { ScoopExport } }
-         [PSCustomObject]@{ Label = "Install Package" ; Action = { InteractingWithScoopData } }
+         [PSCustomObject]@{ Label = "Install a Package" ; Action = { InteractingWithScoopData } }
          [PSCustomObject]@{ Label = "Install All" ; Action = { ScoopInstallAll } }
          [PSCustomObject]@{ Label = "Restore/Import Packages" ; Action = { ScoopImport } }
          [PSCustomObject]@{ Label = "Update All Scoop Installed Packages" ; Action = { ScoopUpdate } }
