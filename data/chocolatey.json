@@ -4,7 +4,8 @@
       "elixir",
       "flutter",
       "httpie",
-      "ninja"
+      "ninja",
+      "starship"
    ],
    "Ignore": []
 }

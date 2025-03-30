@@ -1,3 +1,5 @@
+adwaita (nerd fonts)
+Iosevka (nerd fonts)
 inter (nerd fonts)
 geist (nerd fonts)
 jetbrains (nerd fonts)

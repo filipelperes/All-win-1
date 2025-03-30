@@ -12,7 +12,7 @@
 "VMware.WorkstationPlayer"
 
 FROM MICROSOFT STORE: Telegram, Netflix, Prime Video, Disney+, onenote for windows 10, reddit, piccollage, alexa
-MISSING: Format factory, Atube Catcher, Zen Browser, DaVinci Resolve, Premiere Rush, Photofiltre, Meta trader 4 e 5, pointofix, filezilla, diffchecker, muse hub, apowermirror, apidog, hoppscotch, twitter (x), keytweak
+MISSING: Format factory, Atube Catcher, Zen Browser, DaVinci Resolve, Premiere Rush, Photofiltre, Meta trader 4 e 5, pointofix, filezilla, diffchecker, muse hub, apowermirror, apidog, hoppscotch, twitter (x), keytweak, Amazon Q
 
 OPTIONALS: Codux, Eclipse, JupyterNotebook, Microsoft.VisualStudio.2022.BuildTools, ProjectJupyter.JupyterLab
 MISSING: SQL Power Architect

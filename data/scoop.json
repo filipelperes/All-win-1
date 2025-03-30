@@ -1,4 +1,8 @@
 {
-   "Packages": [],
+   "Packages": [
+      "main/uv",
+      "pipx",
+      "starship"
+   ],
    "Ignore": []
 }

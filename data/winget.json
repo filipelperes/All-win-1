@@ -1,291 +1,366 @@
 ﻿{
-   "Packages": {
-      "Essentials": {
-         "Java": [
-            "Oracle.JavaRuntimeEnvironment"
-         ],
-         "Microsoft": [
-            "Microsoft.DirectX",
-            "Microsoft.DotNet.Runtime.6",
-            "Microsoft.PowerShell",
-            "Microsoft.VCRedist.2005.x64",
-            "Microsoft.VCRedist.2005.x86",
-            "Microsoft.VCRedist.2010.x64",
-            "Microsoft.VCRedist.2010.x86",
-            "Microsoft.VCRedist.2012.x64",
-            "Microsoft.VCRedist.2012.x86",
-            "Microsoft.VCRedist.2013.x64",
-            "Microsoft.VCRedist.2013.x86",
-            "Microsoft.VCRedist.2015+.x64",
-            "Microsoft.VCRedist.2015+.x86"
-         ],
-         "Utilities": [
-            "7zip.7zip",
-            "AnyDesk.AnyDesk",
-            "Flameshot.Flameshot",
-            "Notepad++.Notepad++",
-            "Piriform.CCleaner",
-            "Skillbrains.Lightshot"
-         ],
-         "Unknown": [
-            "9PM860492SZD",
-            "XP8BT8DW290MPQ",
-            "XPDP273C0XHQH2"
-         ],
-         "Ignore": []
-      },
-      "4Devs": {
-         "Code Editors": [
-            "Anaconda.Anaconda3",
-            "Anysphere.Cursor",
-            "Apache.NetBeans",
-            "ArduinoSA.CLI",
-            "ArduinoSA.IDE.stable",
-            "Codeblocks.Codeblocks",
-            "JetBrains.Toolbox",
-            "lukehaas.RunJS",
-            "Microsoft.VisualStudio.2022.Community",
-            "Microsoft.VisualStudioCode.CLI",
-            "Microsoft.VisualStudioCode",
-            "Replit.Replit",
-            "SublimeHQ.SublimeText.4"
-         ],
-         "Databases": [
-            "beekeeper-studio.beekeeper-studio",
-            "DBBrowserForSQLite.DBBrowserForSQLite",
-            "dbeaver.dbeaver",
-            "DBVis.DBVisualizer",
-            "HeidiSQL.HeidiSQL",
-            "Microsoft.AzureDataStudio",
-            "Microsoft.SQLServerManagementStudio",
-            "Oracle.MySQLWorkbench",
-            "PostgreSQL.pgAdmin"
-         ],
-         "Git": [
-            "Axosoft.GitKraken",
-            "Git.Git",
-            "GitHub.GitHubDesktop",
-            "Microsoft.Git",
-            "SublimeHQ.SublimeMerge"
-         ],
-         "Servers": [
-            "ApacheFriends.Xampp.8.2",
-            "MAMP.MAMP"
-         ],
-         "Terminals": [
-            "9MZ1SNWT0N5D",
-            "Microsoft.WindowsTerminal",
-            "Vercel.Hyper"
-         ],
-         "Tools": [
-            "Cygwin.Cygwin",
-            "DEVCOM.Lua",
-            "DEVCOM.LuaJIT",
-            "Docker.DockerCLI",
-            "Docker.DockerDesktop",
-            "Erlang.ErlangOTP",
-            "Figma.Figma",
-            "GoLang.Go",
-            "HTTPie.HTTPie",
-            "Insomnia.Insomnia",
-            "LLVM.clangd",
-            "LLVM.LLVM",
-            "LuaLS.lua-language-server",
-            "Microsoft.OpenJDK.17",
-            "MSYS2.MSYS2",
-            "OpenJS.NodeJS.LTS",
-            "Oracle.JDK.21",
-            "Postman.Postman",
-            "Python.Python.3.11",
-            "Python.Python.3.12",
-            "rjpcomputing.luaforwindows",
-            "Rustlang.Rust.MSVC",
-            "Rustlang.Rustup",
-            "Starship.Starship"
-         ],
-         "Virtual Machines": [
-            "Oracle.VirtualBox"
-         ],
-         "Ignore": []
-      },
-      "Personal": {
-         "Bibles": [
-            "9PPRWS532N91",
-            "9WZDNCRDK3WP",
-            "9WZDNCRDQF45",
-            "9WZDNCRFJ3B4",
-            "9WZDNCRFJ3B4"
-         ],
-         "Browsers": [
-            "Alex313031.Mercury",
-            "Brave.Brave",
-            "Ghostery.GhosteryDawn",
-            "Google.Chrome",
-            "Maxthon.Maxthon",
-            "Mozilla.Firefox.DeveloperEdition",
-            "Mozilla.Firefox",
-            "MullvadVPN.MullvadBrowser",
-            "Opera.Opera",
-            "Opera.OperaCrypto",
-            "Opera.OperaGX",
-            "PushPlayLabs.Sidekick",
-            "TheBrowserCompany.Arc",
-            "TorProject.TorBrowser",
-            "Vivaldi.Vivaldi"
-         ],
-         "Color Picker": [
-            "martinchrzan.ColorPicker",
-            "Toinane.Colorpicker"
-         ],
-         "Command Line": [
-            "chrisant996.Clink"
-         ],
-         "Design": [
-            "Genymobile.Genymotion",
-            "Ultimaker.Cura"
-         ],
-         "Development": [
-            "9P5ZSCL5QC8W",
-            "EdrawSoft.EdrawMax",
-            "Kickresume",
-            "RaspberryPiFoundation.RaspberryPiImager",
-            "XPDDZS9L38TQPH"
-         ],
-         "Email": [
-            "9NRX63209R7B",
-            "9PM5VM1S3VMQ",
-            "Mozilla.Thunderbird",
-            "Proton.ProtonMail",
-            "Proton.ProtonMailBridge"
-         ],
-         "Entertainments": [
-            "Spotify.Spotify",
-            "Stremio.Stremio"
-         ],
-         "Finance": [
-            "BinanceTech.Binance",
-            "Electrum.Electrum"
-         ],
-         "Games": [
-            "RiotGames.LeagueOfLegends.BR",
-            "Valve.Steam"
-         ],
-         "Image Editor": [
-            "9NBLGGH4TWWG",
-            "9NBLGGH6BGX8",
-            "9NWJ8JHT6WGW",
-            "9NWMNVL1CX60",
-            "9P6R3X22085X",
-            "9P9S2QVKZFRD",
-            "9P87M9TKNKVL",
-            "9P94LH3Q1CP5",
-            "9WZDNCRCWFTB",
-            "9WZDNCRFJ1BH",
-            "9WZDNCRFJ10M",
-            "9WZDNCRFJ27N",
-            "9WZDNCRFJB13",
-            "Canva.Canva",
-            "darktable.darktable",
-            "dotPDN.PaintDotNet",
-            "GIMP.GIMP",
-            "ImageMagick.ImageMagick",
-            "Inkscape.Inkscape",
-            "KDE.Krita",
-            "XPDLPKWG9SW2WD"
-         ],
-         "Media": [
-            "Anki.Anki",
-            "Audacity.Audacity",
-            "HandBrake.HandBrake",
-            "OBSProject.OBSStudio",
-            "OpenMedia.4KVideoDownloaderPlus",
-            "VideoLAN.VLC",
-            "Vysor.Vysor",
-            "XP8JK4TBQ03LZ4"
-         ],
-         "Mobile Tools": [
-            "9PGM3QB3PDRD",
-            "dev47apps.DroidCam",
-            "e2eSoft.iVCam",
-            "Samsung.DeX"
-         ],
-         "Notes": [
-            "9NXQQ40LDW3X",
-            "9WZDNCRFJ3MB",
-            "Notion.Notion",
-            "XPFFZHVGQWWLHB"
-         ],
-         "Offices": [
-            "9NSGM705MQWC",
-            "9WZDNCRD29V9",
-            "Apache.OpenOffice",
-            "Kingsoft.WPSOffice",
-            "ONLYOFFICE.DesktopEditors",
-            "TheDocumentFoundation.LibreOffice"
-         ],
-         "Other": [
-            "9PF94J2D9F6X",
-            "Guru3D.Afterburner",
-            "XPFCC4CD725961"
-         ],
-         "Remote Access": [
-            "9WZDNCRFJ3PS",
-            "AirDroid.AirDroid",
-            "RustDesk.RustDesk",
-            "XPDM17HK323C4X"
-         ],
-         "Security": [
-            "Bitwarden.Bitwarden",
-            "Bitwarden.CLI"
-         ],
-         "Socials": [
-            "9MXBP1FB84CQ",
-            "9NBLGGH5L9XT",
-            "9NH2GPH4JZS4",
-            "9NKSQGP7F2NH",
-            "9PF9RTKMMQ69",
-            "9PFHDSF91B9R",
-            "9WZDNCRF0083",
-            "9WZDNCRFJ2WL",
-            "9WZDNCRFJ4Q7",
-            "9WZDNCRFJ32Q",
-            "9WZDNCRFJ364",
-            "Discord.Discord",
-            "XPFM5P5KDWF0JP",
-            "Zoom.Zoom"
-         ],
-         "Todos": [
-            "9NBLGGH4XXVW",
-            "9NBLGGH5R558",
-            "Doist.Todoist"
-         ],
-         "Utilities": [
-            "angryziber.AngryIPScanner",
-            "EaseUS.PartitionMaster",
-            "Grammarly.Grammarly",
-            "Insynchq.Insync",
-            "LocalSend.LocalSend",
-            "Mega.MEGASync",
-            "Microsoft.PowerToys",
-            "qBittorrent.qBittorrent",
-            "SoftDeluxe.FreeDownloadManager",
-            "MartiCliment.UniGetUI",
-            "WiresharkFoundation.Wireshark",
-            "flick9000.WinScript"
-         ],
-         "Video Editor": [
-            "9P1J8S7CCWWT",
-            "BlenderFoundation.Blender",
-            "ByteDance.CapCut",
-            "KDE.Kdenlive",
-            "LWKS.lightworks",
-            "Meltytech.Shotcut",
-            "OpenShot.OpenShot",
-            "VSDC.Editor",
-            "Wondershare.Filmora"
-         ],
-         "Ignore": []
-      }
-   },
-   "Ignore": []
+    "Packages": {
+        "Essentials": {
+            "Java": [
+                "Oracle.JavaRuntimeEnvironment"
+            ],
+            "Microsoft": [
+                "9PM860492SZD",
+                "Microsoft.DirectX",
+                "Microsoft.DotNet.Runtime.6",
+                "Microsoft.PowerShell",
+                "Microsoft.VCRedist.2005.x64",
+                "Microsoft.VCRedist.2005.x86",
+                "Microsoft.VCRedist.2010.x64",
+                "Microsoft.VCRedist.2010.x86",
+                "Microsoft.VCRedist.2012.x64",
+                "Microsoft.VCRedist.2012.x86",
+                "Microsoft.VCRedist.2013.x64",
+                "Microsoft.VCRedist.2013.x86",
+                "Microsoft.VCRedist.2015+.x64",
+                "Microsoft.VCRedist.2015+.x86",
+                "XP8BT8DW290MPQ"
+            ],
+            "Utilities": [
+                "7zip.7zip",
+                "AnyDesk.AnyDesk",
+                "Flameshot.Flameshot",
+                "Notepad++.Notepad++",
+                "Piriform.CCleaner",
+                "RARLab.WinRAR",
+                "Skillbrains.Lightshot",
+                "XPDP273C0XHQH2"
+            ],
+            "Ignore": []
+        },
+        "4Devs": {
+            "Code Editors": [
+                "Anaconda.Anaconda3",
+                "Anysphere.Cursor",
+                "Apache.NetBeans",
+                "ArduinoSA.CLI",
+                "ArduinoSA.IDE.stable",
+                "Codeblocks.Codeblocks",
+                "Codeium.Windsurf",
+                "equalsraf.neovim-qt",
+                "JetBrains.Toolbox",
+                "lukehaas.RunJS",
+                "Microsoft.VisualStudio.2022.Community",
+                "Microsoft.VisualStudioCode",
+                "Microsoft.VisualStudioCode.CLI",
+                "Neovide.Neovide",
+                "Neovim.Neovim",
+                "Replit.Replit",
+                "SublimeHQ.SublimeText.4",
+                "VSCodium.VSCodium",
+                "XPFPPN5PLH3BFV"
+            ],
+            "Databases": [
+                "beekeeper-studio.beekeeper-studio",
+                "DBBrowserForSQLite.DBBrowserForSQLite",
+                "dbeaver.dbeaver",
+                "DBVis.DBVisualizer",
+                "HeidiSQL.HeidiSQL",
+                "Microsoft.AzureDataStudio",
+                "Microsoft.SQLServerManagementStudio",
+                "Oracle.MySQLWorkbench",
+                "PostgreSQL.pgAdmin"
+            ],
+            "Git": [
+                "Axosoft.GitKraken",
+                "Git.Git",
+                "GitHub.GitHubDesktop",
+                "Microsoft.Git",
+                "SublimeHQ.SublimeMerge"
+            ],
+            "Servers": [
+                "ApacheFriends.Xampp.8.2",
+                "MAMP.MAMP"
+            ],
+            "Terminals": [
+                "9MZ1SNWT0N5D",
+                "chrisant996.Clink",
+                "JanDeDobbeleer.OhMyPosh",
+                "Microsoft.AIShell",
+                "Microsoft.WindowsTerminal",
+                "Vercel.Hyper"
+            ],
+            "Tools": [
+                "astral-sh.ruff",
+                "astral-sh.uv",
+                "Cygwin.Cygwin",
+                "DEVCOM.Lua",
+                "DEVCOM.LuaJIT",
+                "Docker.DockerCLI",
+                "Docker.DockerDesktop",
+                "Erlang.ErlangOTP",
+                "Figma.Figma",
+                "GoLang.Go",
+                "HTTPie.HTTPie",
+                "Insomnia.Insomnia",
+                "LLVM.clangd",
+                "LLVM.LLVM",
+                "LuaLS.lua-language-server",
+                "Microsoft.OpenJDK.17",
+                "Microsoft.VisualStudio.2022.BuildTools",
+                "MSYS2.MSYS2",
+                "OpenJS.NodeJS.LTS",
+                "Oracle.JDK.21",
+                "PortSwigger.BurpSuite.Community",
+                "Postman.Postman",
+                "Python.Python.3.11",
+                "Python.Python.3.12",
+                "rjpcomputing.luaforwindows",
+                "Rustlang.Rust.MSVC",
+                "Rustlang.Rustup",
+                "Starship.Starship"
+            ],
+            "Version Manager": [
+                "CoreyButler.NVMforWindows",
+                "jdx.mise",
+                "Schniz.fnm"
+            ],
+            "Virtual Machines": [
+                "Oracle.VirtualBox"
+            ],
+            "Ignore": []
+        },
+        "Personal": {
+            "Bibles": [
+                "9PPRWS532N91",
+                "9WZDNCRDK3WP",
+                "9WZDNCRDQF45",
+                "9WZDNCRFJ3B4"
+            ],
+            "Browsers": [
+                "9NVN9SZ8KFD7",
+                "Ablaze.Floorp",
+                "Ablaze.Floorp.Daylight",
+                "Alex313031.Mercury",
+                "Alex313031.Thorium",
+                "Apple.Safari",
+                "Brave.Brave",
+                "eloston.ungoogled-chromium",
+                "Ghostery.GhosteryDawn",
+                "Google.Chrome",
+                "LibreWolf.LibreWolf",
+                "Maxthon.Maxthon",
+                "Microsoft.Edge",
+                "Mozilla.Firefox",
+                "Mozilla.Firefox.DeveloperEdition",
+                "MullvadVPN.MullvadBrowser",
+                "Opera.Opera",
+                "Opera.Opera.Dev",
+                "Opera.OperaAir",
+                "Opera.OperaCrypto",
+                "Opera.OperaGX",
+                "PushPlayLabs.Sidekick",
+                "TheBrowserCompany.Arc",
+                "TorProject.TorBrowser",
+                "Vivaldi.Vivaldi",
+                "XP8CF6S8G2D5T6",
+                "XPDBZ4MPRKNN30",
+                "XPFCFKCNNTXGQD",
+                "XPFMDW72VHTTX9",
+                "Yandex.Browser",
+                "Zen-Team.Zen-Browser",
+                "Zen-Team.Zen-Browser.Twilight"
+            ],
+            "Color Picker": [
+                "martinchrzan.ColorPicker",
+                "Toinane.Colorpicker"
+            ],
+            "Design": [
+                "Genymobile.Genymotion",
+                "Ultimaker.Cura"
+            ],
+            "Development": [
+                "9P5ZSCL5QC8W",
+                "EdrawSoft.EdrawMax",
+                "Kickresume",
+                "RaspberryPiFoundation.RaspberryPiImager",
+                "XP8JMKMC3GVX23",
+                "XPDDZS9L38TQPH",
+                "XPFD1F63GK06N8"
+            ],
+            "Email": [
+                "9NRX63209R7B",
+                "9PM5VM1S3VMQ",
+                "Mozilla.Thunderbird",
+                "Proton.ProtonMail",
+                "Proton.ProtonMailBridge"
+            ],
+            "Entertainments": [
+                "9NCBCSZSJRSB",
+                "Spotify.Spotify",
+                "Stremio.Stremio"
+            ],
+            "Finance": [
+                "BinanceTech.Binance",
+                "Electrum.Electrum"
+            ],
+            "Games": [
+                "RiotGames.LeagueOfLegends.BR",
+                "Valve.Steam"
+            ],
+            "IAs": [
+                "9PF94J2D9F6X"
+            ],
+            "Image Editor": [
+                "9NBLGGH4TWWG",
+                "9NBLGGH6BGX8",
+                "9NWJ8JHT6WGW",
+                "9NWMNVL1CX60",
+                "9P6R3X22085X",
+                "9P87M9TKNKVL",
+                "9P94LH3Q1CP5",
+                "9P9S2QVKZFRD",
+                "9PNSJCLXDZ0V",
+                "9WZDNCRCWFTB",
+                "9WZDNCRFJ10M",
+                "9WZDNCRFJ1BH",
+                "9WZDNCRFJ27N",
+                "9WZDNCRFJB13",
+                "Canva.Canva",
+                "darktable.darktable",
+                "dotPDN.PaintDotNet",
+                "GIMP.GIMP",
+                "GIMP.GIMP.3",
+                "ImageMagick.ImageMagick",
+                "Inkscape.Inkscape",
+                "KDE.Krita",
+                "XP9K1VV4DPL5XT",
+                "XPDLPKWG9SW2WD"
+            ],
+            "Media": [
+                "9NBLGGH4VVNH",
+                "Anki.Anki",
+                "Audacity.Audacity",
+                "HandBrake.HandBrake",
+                "OBSProject.OBSStudio",
+                "OpenMedia.4KVideoDownloaderPlus",
+                "VideoLAN.VLC",
+                "Vysor.Vysor",
+                "XP8JK4TBQ03LZ4",
+                "XPDM1ZW6815MQM"
+            ],
+            "Mobile Tools": [
+                "9PGM3QB3PDRD",
+                "dev47apps.DroidCam",
+                "e2eSoft.iVCam",
+                "Samsung.DeX"
+            ],
+            "Monitor": [
+                "Guru3D.Afterburner"
+            ],
+            "Notes": [
+                "9NXQQ40LDW3X",
+                "9WZDNCRFJ3MB",
+                "Notion.Notion",
+                "Obsidian.Obsidian",
+                "ToEverything.AFFiNE",
+                "XPFFZHVGQWWLHB"
+            ],
+            "Offices": [
+                "9NSGM705MQWC",
+                "9WZDNCRD29V9",
+                "Apache.OpenOffice",
+                "Kingsoft.WPSOffice",
+                "ONLYOFFICE.DesktopEditors",
+                "TheDocumentFoundation.LibreOffice"
+            ],
+            "Remote Access": [
+                "9WZDNCRFJ3PS",
+                "AirDroid.AirDroid",
+                "RustDesk.RustDesk",
+                "XPDM17HK323C4X"
+            ],
+            "Security": [
+                "Bitwarden.Bitwarden",
+                "Bitwarden.CLI"
+            ],
+            "Socials": [
+                "9MXBP1FB84CQ",
+                "9NBDXK71NK08",
+                "9NBLGGH5L9XT",
+                "9NH2GPH4JZS4",
+                "9NKSQGP7F2NH",
+                "9PF9RTKMMQ69",
+                "9PFHDSF91B9R",
+                "9WZDNCRF0083",
+                "9WZDNCRFJ2WL",
+                "9WZDNCRFJ4Q7",
+                "9WZDNCRFJ32Q",
+                "9WZDNCRFJ364",
+                "Discord.Discord",
+                "Telegram.TelegramDesktop",
+                "XPDC2RH70K22MN",
+                "XPFCC4CD725961",
+                "XPFM5P5KDWF0JP",
+                "Zoom.Zoom"
+            ],
+            "Themes": [
+                "9P3JFPWWDZRC",
+                "RamenSoftware.Windhawk",
+                "Stardock.Start10",
+                "Stardock.Start11"
+            ],
+            "Todos": [
+                "9NBLGGH4XXVW",
+                "9NBLGGH5R558",
+                "Appest.TickTick",
+                "Doist.Todoist"
+            ],
+            "Utilities": [
+                "9NBLGGH4S79B",
+                "9PCTGDFXVZLJ",
+                "AlexandrSubbotin.Cerebro",
+                "angryziber.AngryIPScanner",
+                "Bopsoft.Listary",
+                "EaseUS.PartitionMaster",
+                "flick9000.WinScript",
+                "Flow-Launcher.Flow-Launcher",
+                "Google.QuickShare",
+                "Grammarly.Grammarly",
+                "Insynchq.Insync",
+                "lin-ycv.EverythingPowerToys",
+                "LocalSend.LocalSend",
+                "MartiCliment.UniGetUI",
+                "Mega.MEGASync",
+                "Microsoft.PowerToys",
+                "MilosParipovic.OneCommander",
+                "Paragon.ParagonBackupRecoveryCE",
+                "Paragon.PartitionManagerCE",
+                "PDFgear.PDFgear",
+                "qBittorrent.qBittorrent",
+                "SoftDeluxe.FreeDownloadManager",
+                "SoftwareOK.Q-Dir",
+                "stnkl.EverythingToolbar",
+                "voidtools.Everything",
+                "voidtools.Everything.Cli",
+                "WiresharkFoundation.Wireshark",
+                "XP8JW0JPNPDN61",
+                "XP9K238D38F6B7",
+                "XPDLNJ2FWVCXR1",
+                "XPFP0G0V147H6D"
+            ],
+            "Video Editor": [
+                "9P1J8S7CCWWT",
+                "BlenderFoundation.Blender",
+                "ByteDance.CapCut",
+                "KDE.Kdenlive",
+                "LWKS.lightworks",
+                "Meltytech.Shotcut",
+                "OpenShot.OpenShot",
+                "VSDC.Editor",
+                "Wondershare.Filmora",
+                "Wondershare.Filmora.Pro",
+                "XP8JNPKGTV6NRL",
+                "XP9CBRT0JCQDDP",
+                "XPDCRDGRGDHMH4"
+            ],
+            "Ignore": []
+        }
+    },
+    "Ignore": []
 }
