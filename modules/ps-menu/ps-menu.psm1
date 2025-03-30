@@ -108,13 +108,15 @@ Shortcuts Keys:
 "@ -ForegroundColor Gray
 }
 
-function Get-MenuOptions {
-	param ( $options, [switch]$submenu )
+function Get-MenuItems {
+	param ( $items, [switch]$submenu )
+
+	$obj = if ($submenu) { @{ Label = "Back" ; Action = { return } } }
+	else { @{ Label = "View Shortcuts Keys" ; Action = { Show-Keys } } }
 
 	return @(
-		$options
-		if ($submenu) { [PSCustomObject]@{ Label = "Back"; Action = { return } } }
-		else { [PSCustomObject]@{ Label = "View Shortcuts Keys"; Action = { Show-Keys } } }
+		$items
+		[PSCustomObject]$obj
 		[PSCustomObject]@{ Label = "Exit"; Action = { exit } }
 	)
 }

@@ -69,7 +69,7 @@ function InteractingWithChocoData {
       }
    }
 
-   Show-Menu -options $menuOptions -titleName $null -submenu
+   Show-Menu -options $menuOptions -title $null -submenu
    return
 }
 
@@ -84,7 +84,7 @@ else {
          [PSCustomObject]@{ Label = "Backup/Export Installed Packages" ; Action = { ChocoExport } }
          [PSCustomObject]@{ Label = "Install Chocolatey GUI" ; Action = { ChocoInstall -package "chocolateygui" ; ChocoUpgrade -package "chocolateygui" } }
          [PSCustomObject]@{ Label = "Install All" ; Action = { ChocoInstallAll } }
-         [PSCustomObject]@{ Label = "Install Packages" ; Action = { InteractingWithChocoData } }
+         [PSCustomObject]@{ Label = "Install a Package" ; Action = { InteractingWithChocoData } }
          [PSCustomObject]@{ Label = "Restore/Import Packages" ; Action = { ChocoImport } }
          [PSCustomObject]@{ Label = "Synchronize System Packages With Chocolatey" ; Action = { choco sync -y | Out-Null } }
          [PSCustomObject]@{ Label = "Update All Chocolatey Installed Packages" ; Action = { ChocoUpgrade } }

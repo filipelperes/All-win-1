@@ -2,6 +2,7 @@
 
 function Install-fnm { winget install --id "Schniz.fnm" --accept-package-agreements }
 function Install-NVMForWindows { winget install --id "CoreyButler.NVMforWindows" --accept-package-agreements }
+function Install-mise-en-place { winget install --id "jdx.mise" --accept-package-agreements }
 function Install-PyenvForWindows {
    Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 }
@@ -26,13 +27,15 @@ function Update-AllPipPackages {
 }
 
 function Import-GlobalNodePackages {
+   $packages = ArrayToString -array $global:nodePackages -separator " "
+
    $importGlobalOptions = @(
-      [PSCustomObject]@{ Label = "Using NPM" ; Action = { npm install --global (ArrayToString -array $global:nodePackages -separator " ") } }
-      [PSCustomObject]@{ Label = "Using Yarn" ; Action = { yarn global add (ArrayToString -array $global:nodePackages -separator " ") } }
-      [PSCustomObject]@{ Label = "Using PNPM" ; Action = { pnpm add -g (ArrayToString -array $global:nodePackages -separator " ") } }
+      [PSCustomObject]@{ Label = "Using NPM" ; Action = { npm install --global $packages } }
+      [PSCustomObject]@{ Label = "Using Yarn" ; Action = { yarn global add $packages } }
+      [PSCustomObject]@{ Label = "Using PNPM" ; Action = { pnpm add -g $packages } }
    )
 
-   Show-Menu -options $importGlobalOptions -titleName $null -submenu
+   Show-Menu -options $importGlobalOptions -title $null -submenu
 }
 
 function Install-FishShellOnGitBash {
@@ -111,12 +114,43 @@ function Install-FishShellOnGitBash {
    foreach ($id in $packages.Keys) {
       $packageInfo = winget list --id $id
       if ($packageInfo[-1] -eq "No installed package found matching input criteria.") {
-         $install = Read-Host ($packages[$id])
-         if ($install.Trim().ToLower() -in @("y", "yes", "s", "sim")) {
-            winget install --id $id --accept-package-agreements
+         while (-not $install -or $install -notmatch $global:yesNoPattern) {
+            $install = (Read-Host "$($packages[$id]) (yes/no)").Trim().ToLower()
+            switch -Regex ($install) {
+               $global:noPattern { break }
+               $global:yesPattern {
+                  winget install --id $id --accept-package-agreements
+                  break
+               }
+            }
          }
       }
    }
+}
+
+function Install-Aider {
+   while (-not $dependencies -or $dependencies -notmatch $global:yesNoPattern) {
+      $dependencies = (Read-Host "Do you agree to install Python 3.12 if needed? (yes/no)").Trim().ToLower()
+      switch -Regex ($dependencies) {
+         $global:yesPattern { break }
+         $global:noPattern { return }
+      }
+   }
+
+   Set-ExecutionPolicy ByPass -Scope Process -Force
+   Invoke-RestMethod "https://aider.chat/install.ps1" | Invoke-Expression
+}
+
+function Install-UV {
+   winget install --id astral-sh.uv --accept-package-agreements
+   # Set-ExecutionPolicy ByPass -Scope Process
+   # Invoke-RestMethod "https://astral.sh/uv/install.ps1" | Invoke-Expression
+}
+
+function Install-Ruff {
+   winget install --id astral-sh.ruff --accept-package-agreements
+   # Set-ExecutionPolicy Bypass -Scope Process
+   # Invoke-RestMethod "https://astral.sh/ruff/install.ps1" | Invoke-Expression
 }
 
 $nerdFontsMenu = [PSCustomObject]@{
@@ -125,8 +159,9 @@ $nerdFontsMenu = [PSCustomObject]@{
    Submenu     = @(
       [PSCustomObject]@{ Label = "Fira Code" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "fira-code", "fira-mono" } }
       [PSCustomObject]@{ Label = "Geist" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "geist-mono" } }
+      [PSCustomObject]@{ Label = "Iosevka" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "iosevka", "iosevka-term", "iosevka-term-slab" } }
       [PSCustomObject]@{ Label = "JetBrains" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "jetbrains-mono" } }
-      [PSCustomObject]@{ Label = "All" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "fira-code", "fira-mono", "geist-mono", "jetbrains-mono" } }
+      [PSCustomObject]@{ Label = "All" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "fira-code", "fira-mono", "geist-mono", "iosevka", "iosevka-term", "iosevka-term-slab", "jetbrains-mono" } }
    )
 }
 
@@ -134,10 +169,14 @@ $4devsMenu = [PSCustomObject]@{
    Description = "4Devs"
    Label       = "4Devs"
    Submenu     = @(
+      [PSCustomObject]@{ Label = "Install Aider" ; Action = { Install-Aider } }
+      [PSCustomObject]@{ Label = "Install Ruff" ; Action = { Install-Ruff } }
+      [PSCustomObject]@{ Label = "Install UV" ; Action = { Install-UV } }
       [PSCustomObject]@{ Label = "Import Global Node Packages" ; Action = { Import-GlobalNodePackages } }
       [PSCustomObject]@{ Label = "Import Pip Packages" ; Action = { Import-PipPackages } }
       [PSCustomObject]@{ Label = "Update All Pip Packages" ; Action = { Update-AllPipPackages } }
       [PSCustomObject]@{ Label = "Install Fast Node Manager (fnm)" ; Action = { Install-fnm } }
+      [PSCustomObject]@{ Label = "Install mise-en-place" ; Action = { Install-mise-en-place } }
       [PSCustomObject]@{ Label = "Install NVM For Windows" ; Action = { Install-NVMForWindows } }
       [PSCustomObject]@{ Label = "Install pyenv for Windows" ; Action = { Install-PyenvForWindows } }
       [PSCustomObject]@{ Label = "Install Fish Shell On Git Bash" ; Action = { Install-FishShellOnGitBash } }

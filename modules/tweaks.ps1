@@ -90,8 +90,8 @@ function RenamePC {
     Write-Host $global:space
 
     while ($null -eq $newName -or $newName -notmatch $pattern) {
-        $newName = Read-Host "Time for a makeover! Or 'exit'/'back'/'cancel' to keep it ugly."
-        if ($newName.Trim().ToLower() -in @("exit", "back", 'cancel')) { return }
+        $newName = (Read-Host "Time for a makeover! Or 'exit'/'back'/'cancel' to keep it ugly.").Trim().ToLower()
+        if ($newName -in @("exit", "back", "cancel")) { return }
         if ($newName -notmatch $pattern) {
             Write-Warning "Make sure the name is at least 3 characters long and does not contain special characters."
         }
@@ -100,8 +100,13 @@ function RenamePC {
     try {
         Rename-Computer -NewName $newName -Force -PassThru
 
-        $restart = Read-Host "Do you want to restart now? (Y/N)"
-        if ($restart.Trim().ToLower() -in @("y", "yes", "s", "sim")) { Restart-Computer -Force }
+        while (-not $restart -or $restart -notmatch $global:yesNoPattern) {
+            $restart = (Read-Host "Do you want to restart now? (yes/no)").Trim().ToLower()
+            switch -Regex ($restart) {
+                $global:noPattern { break }
+                $global:yesPattern { Restart-Computer -Force }
+            }
+        }
     }
     catch {
         Write-Warning "Failed to rename the computer:`n$_"
@@ -199,15 +204,8 @@ function Enable-GodMode {
 }
 
 function Enable-MaxPerformancePowerPlan {
-    $powerSchemeGuid = "ded574b5-45a0-4f42-8737-46345c09c238"
-    powercfg -duplicatescheme $powerSchemeGuid | Out-Null
-    powercfg -setactive $powerSchemeGuid
-}
-
-function CheckAndRepairWindowsImage {
-    DISM /Online /Cleanup-Image /CheckHealth
-    DISM /Online /Cleanup-Image /ScanHealth
-    DISM /Online /Cleanup-Image /RestoreHealth
+    powercfg -duplicatescheme "ded574b5-45a0-4f42-8737-46345c09c238" | Out-Null
+    powercfg -duplicatescheme "e9a42b02-d5df-448d-aa00-03f14749eb61" | Out-Null
 }
 
 function Get-AsciiCode {
@@ -215,16 +213,32 @@ function Get-AsciiCode {
     return [int][char][ConsoleKey]::$key
 }
 
+function FixWindowsStore {
+    wsreset.exe
+    Add-AppxPackage -register "C:\Program Files\WindowsApps\Microsoft.WindowsStore*\AppxManifest.xml" -DisableDevelopmentMode
+}
+
+$CARWI = [PSCustomObject]@{
+    Label   = "Check and Repair Windows Image"
+    Submenu = @(
+        [PSCustomObject]@{ Label = "DISM /Online /Cleanup-Image /CheckHealth" ; Action = { DISM /Online /Cleanup-Image /CheckHealth } }
+        [PSCustomObject]@{ Label = "DISM /Online /Cleanup-Image /ScanHealth" ; Action = { DISM /Online /Cleanup-Image /ScanHealth } }
+        [PSCustomObject]@{ Label = "DISM /Online /Cleanup-Image /RestoreHealth" ; Action = { DISM /Online /Cleanup-Image /RestoreHealth } }
+        [PSCustomObject]@{ Label = "All" ; Action = { DISM /Online /Cleanup-Image /CheckHealth ; DISM /Online /Cleanup-Image /ScanHealth ; DISM /Online /Cleanup-Image /RestoreHealth } }
+    )
+}
+
 $tweaksMenu = [PSCustomObject]@{
     Description = "Tweaks"
     Label       = "Tweaks"
     Submenu     = @(
         [PSCustomObject]@{ Label = "Check and Repair System Files" ; Action = { sfc /scannow } }
-        [PSCustomObject]@{ Label = "Check and Repair Windows Image" ; Action = { CheckAndRepairWindowsImage } }
+        $CARWI
         [PSCustomObject]@{ Label = "Enable GodMode (Advanced Users)" ; Action = { Enable-GodMode } }
         [PSCustomObject]@{ Label = "Enable Maximum Performance Power Plan (Advanced Users)" ; Action = { Enable-MaxPerformancePowerPlan } }
         [PSCustomObject]@{ Label = "Enable/Disable Embedded Keyboards (For Notebooks)" ; Action = { ToggleEmbeddedKeyboard } }
         [PSCustomObject]@{ Label = "Fix Date And Hour" ; Action = { FixSystemTime } }
+        [PSCustomObject]@{ Label = "Fix Windows Store" ; Action = { FixWindowsStore } }
         [PSCustomObject]@{ Label = "Open MSConfig" ; Action = { msconfig -Verb RunAs } }
         [PSCustomObject]@{ Label = "Open Regedit (Advanced Users)" ; Action = { regedit } }
         [PSCustomObject]@{ Label = "Open Startup Manager" ; Action = { Open-StartupManager } }

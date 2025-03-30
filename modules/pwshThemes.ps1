@@ -8,7 +8,7 @@ function ColorToolManager {
 
    Invoke-WebRequest -Uri $colorToolUrl -OutFile $colorToolZip
 
-   #if (-not (Test-Path $colorToolDir)) { New-Item -Path $colorToolDir -ItemType Directory | Out-Null }
+   if (-not (Test-Path $colorToolDir)) { New-Item -Path $colorToolDir -ItemType Directory | Out-Null }
 
    Expand-Archive -Path $colorToolZip -DestinationPath $colorToolDir -Force
 
@@ -60,7 +60,7 @@ function Set-TitlebarColor {
 
    Set-ItemProperty -Path $paths[0] -Name "AccentColor" -Value $decColor
    Set-ItemProperty -Path $paths[0] -Name "AccentColorInactive" -Value $decColor
-   Set-ItemProperty -Path $paths[1] -Name "ColorPrevalence" -Value 1
+   # Set-ItemProperty -Path $paths[1] -Name "ColorPrevalence" -Value 1
 }
 
 function Set-ConsoleTheme {
@@ -70,30 +70,45 @@ function Set-ConsoleTheme {
 
    switch ($theme) {
       "Dracula" {
-         Install-Module -Name PowerShellGet -Force
-         Install-Module -Name posh-git -Force
+         Install-PackageProvider -Name NuGet -Scope AllUsers
+         Install-Module -Name PowerShellGet -Scope AllUsers
+         Install-Module -Name posh-git -Scope AllUsers
 
          ColorToolManager -colorToolUrl "https://raw.githubusercontent.com/waf/dracula-cmd/master/dist/ColorTool.zip"
 
          $pwshCfgUrl = "https://raw.githubusercontent.com/dracula/powershell/refs/heads/master/theme/dracula-prompt-configuration.ps1"
          $pwshCfgName = $pwshCfgUrl.Split("/")[-1].Trim()
          Invoke-WebRequest -Uri $pwshCfgUrl -OutFile "$HOME\$pwshCfgName"
-         Add-Content -Path $PROFILE -Value ". `$PSScriptRoot\$pwshCfgName"
+         $profileContent = Get-Content -Path $PROFILE -ErrorAction SilentlyContinue
+         if (-not $profileContent -or $profileContent -notmatch ". `$HOME\$pwshCfgName") { Add-Content -Path $PROFILE -Value ". `$HOME\$pwshCfgName" }
 
          Set-ConsoleFont -fontName "Consolas"
          SetEnvVarCmdPrompt -prompt "$E[1;32;40m→ $E[1;36;40m$p$E[1;35;40m› $E[1;37;40m"
          Set-TitlebarColor -color "#262835"
+
+         Write-Host @"
+$("`n" * 3)
+In Windows 10, the titlebar color can be set system-wide in Settings $( [char] 8594 ) Personalization $( [char] 8594 ) Colors $( [char] 8594 ) Custom color $( [char] 8594 ) More $( [char] 8594 ) #262835.
+
+Right-click on the powershell title bar, then click Properties, then Colors, and change the screen background RGB to Red:38, Green:40, Blue:53.
+
+Please restart the PowerShell window for the changes to take effect.
+
+"@ -ForegroundColor DarkGreen
+         Read-Host -Prompt "Press 'Enter' To Continue"
       }
    }
 }
 
-$pwshThemesMenu = [PSCustomObject]@{
-   Description = "Powershell Themes"
-   Label       = "Powershell Themes"
-   Submenu     = @(foreach ($i in @("Dracula")) {
-         [PSCustomObject]@{
-            Label  = "$i Theme Console"
-            Action = { Set-ConsoleTheme -theme $i }
-         }
-      })
+$pwshThemesMenu = if ($global:OSVersion -eq 10) {
+   [PSCustomObject]@{
+      Description = "Powershell Themes"
+      Label       = "Powershell Themes"
+      Submenu     = @(foreach ($i in @("Dracula")) {
+            [PSCustomObject]@{
+               Label  = "$i Theme Console"
+               Action = { Set-ConsoleTheme -theme $i }
+            }
+         })
+   }
 }
