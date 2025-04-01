@@ -100,7 +100,8 @@ function ExportEnvironmentVariables {
     $data = GetEnvironmentVariables
     if (-not $data.personal) {
         $data | Add-Member -MemberType NoteProperty -Name personal -Value ( SortAll ( ReplaceAll -obj (GetDefaultEnvVars) -from $from -to $to ) )
-        $data.personal.Machine.Path += ";"
+        if ($data.personal.Machine.Path -notmatch ";$") { $data.personal.Machine.Path += ";" }
+        if ($data.personal.User.Path -notmatch ";$") { $data.personal.User.Path += ";" }
     }
 
     ExportJson -data $data -filePath $envVarsFile
@@ -151,7 +152,7 @@ ExportJson -data $data -filePath $envVarsFile
 
 $environmentVariablesMenu = [PSCustomObject]@{
     Description = "Environment Variables"
-    Label       = "Environment Variables"
+    Label       = "Environment Variables (Experimental)"
     Submenu     = @(
         [PSCustomObject]@{ Label = "Backup/Export" ; Action = { ExportEnvironmentVariables -from $env:USERNAME -to "johndoe" } }
         [PSCustomObject]@{ Label = "Restore/Import" ; Action = { ImportEnvironmentVariables } }

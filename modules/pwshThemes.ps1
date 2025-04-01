@@ -94,7 +94,7 @@ Right-click on the powershell title bar, then click Properties, then Colors, and
 
 Please restart the PowerShell window for the changes to take effect.
 
-"@ -ForegroundColor DarkGreen
+"@ -ForegroundColor Green
          Read-Host -Prompt "Press 'Enter' To Continue"
       }
    }

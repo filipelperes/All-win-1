@@ -142,13 +142,13 @@ function Install-Aider {
 }
 
 function Install-UV {
-   winget install --id astral-sh.uv --accept-package-agreements
+   winget install --id "astral-sh.uv" --accept-package-agreements
    # Set-ExecutionPolicy ByPass -Scope Process
    # Invoke-RestMethod "https://astral.sh/uv/install.ps1" | Invoke-Expression
 }
 
 function Install-Ruff {
-   winget install --id astral-sh.ruff --accept-package-agreements
+   winget install --id "astral-sh.ruff" --accept-package-agreements
    # Set-ExecutionPolicy Bypass -Scope Process
    # Invoke-RestMethod "https://astral.sh/ruff/install.ps1" | Invoke-Expression
 }

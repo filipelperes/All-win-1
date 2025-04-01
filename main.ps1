@@ -70,11 +70,12 @@ function Show-Menu {
         [switch]$submenu,
         [switch]$sorted,
         [switch]$pagination,
+        [switch]$descending,
         $page = 0
         #[PSCustomObject[]]$prevMenu
     )
 
-    if (-not $sorted) { $options = $options | Sort-Object -Property Label }
+    if (-not $sorted) { $options = $options | Sort-Object -Property Label -Descending:$descending }
     $menuItems = if ($pagination) { @() } else { $options }
 
     if ($pagination) {
@@ -91,7 +92,7 @@ function Show-Menu {
         if ($hasMore) {
             $menuItems += [PSCustomObject]@{
                 Label  = "Next | More >>"
-                Action = [scriptblock]::Create("Show-Menu -options `$options -title `$title -submenu:`$submenu -sorted -pagination -page $($page + 1)")
+                Action = [scriptblock]::Create("Show-Menu -options `$options -title `$title -submenu -sorted -pagination -page $($page + 1)")
             }
         }
     }
@@ -116,7 +117,7 @@ function Show-Menu {
 
 
         if ($selectedOption.Submenu) {
-            Show-Menu -options $selectedOption.Submenu -title $selectedOption.Description -submenu # -prevMenu $menuItems
+            Show-Menu -options $selectedOption.Submenu -title $selectedOption.Description -submenu -sorted:$sorted -pagination:$pagination -descending:$descending -page $page # -prevMenu $menuItems
         }
 
         if ($selectedOption.Action) {
@@ -135,4 +136,5 @@ function Show-Menu {
 Write-Host "`n`n$(CenterText -text "Press 'v' to view shortcuts keys" -width 88)" -ForegroundColor Gray
 Show-Menu -options $mainMenu -title "Main"
 
+# Set-Location 'D:\Programming\Projetos\Windows Sync' ; Set-ExecutionPolicy RemoteSigned -Scope Process -Force; .\main.ps1
 <# Set-Location $HOME\Desktop #>

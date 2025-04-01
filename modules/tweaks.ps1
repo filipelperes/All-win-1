@@ -85,11 +85,10 @@ function ToggleSecondsToClock {
 
 function RenamePC {
     $pattern = '^[a-zA-Z0-9]{3,}$'
-    $newName = $null
 
     Write-Host $global:space
 
-    while ($null -eq $newName -or $newName -notmatch $pattern) {
+    while (-not $newName -or $newName -notmatch $pattern) {
         $newName = (Read-Host "Time for a makeover! Or 'exit'/'back'/'cancel' to keep it ugly.").Trim().ToLower()
         if ($newName -in @("exit", "back", "cancel")) { return }
         if ($newName -notmatch $pattern) {
@@ -130,16 +129,13 @@ function Block-PS2KeyboardDriverUpdate {
 
     New-Item -Path $regPath -Force | Out-Null
 
-
     $deniedDevices = StringToArray -string ((Get-ItemProperty -Path $regPath -Name "DenyDeviceIDs" -ErrorAction SilentlyContinue).DenyDeviceIDs) -separator "`n" | Where-Object { $_ }
 
     if ($remove) {
         $deniedDevices = $deniedDevices | Where-Object { $_ -ne $hardwareID }
     }
     else {
-        if (-not ($deniedDevices -contains $hardwareID)) {
-            $deniedDevices += $hardwareID
-        }
+        if (-not ($deniedDevices -contains $hardwareID)) { $deniedDevices += $hardwareID }
     }
 
     if ($deniedDevices) {
@@ -147,7 +143,6 @@ function Block-PS2KeyboardDriverUpdate {
     }
     else {
         Remove-ItemProperty -Path $regPath -Name "DenyDeviceIDs" -ErrorAction SilentlyContinue
-
     }
 }
 

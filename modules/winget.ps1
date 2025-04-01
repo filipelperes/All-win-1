@@ -52,10 +52,11 @@ function WingetImport {
 function WingetInstall {
    param (
       [string]$package,
-      [switch]$extract
+      [switch]$extract,
+      $source = $null
    )
 
-   if ($extract) { $package = ExtractWingetId -package $package }
+   if ($extract) { $package = ExtractWingetId -package $package -source $source }
 
    Write-Output "$("`n" * 3)Installing $((GetPackageName -package $package -line) -replace "Found ", '')"
    winget install --id $package --accept-package-agreements
@@ -82,11 +83,7 @@ function WingetUpdate {
    if ($extract) { $package = ExtractWingetId -package $package }
 
    Write-Output "$("`n" * 3)Updating $((GetPackageName -package $package -line) -replace "Found ", '')"
-
-   switch ($package) {
-      "All" { winget upgrade --all --uninstall-previous --accept-package-agreements }
-      Default { winget upgrade --id $package --accept-package-agreements }
-   }
+   & ([scriptblock]::Create("winget upgrade $(if ($package -eq "all") { "--all --uninstall-previous" } else { "--id '$package'" }) --accept-package-agreements"))
 }
 
 function GetPackageName {
@@ -104,14 +101,15 @@ function GetPackageName {
 }
 
 function ExtractWingetId {
-   param ($package)
+   param ( $package, $source = $null )
 
-   $sourceMSStore = $package -match "msstore\s*$"
-   $pattern = if ($sourceMSStore) { '\b((9|X)[A-Z0-9]+)\b' } else { '\b([\w-]+\.[\w-]+(?:\.[\w-]+)*)\b' }
+   $fromMSStore = $package -match "msstore\s*$" -or $source -eq "msstore"
+   $fromWinget = $package -match "winget\s*$" -or $source -eq "winget"
+   $pattern = if ($fromMSStore) { '\b((9|X)[A-Z0-9]+)\b' } elseif ($fromWinget) { '\b([\w-]+\.[\w-]+(?:\.[\w-]+)*)\b' }
    $package = [regex]::Matches($package, $pattern)
 
    return $(
-      if ($sourceMSStore) { $package.Value }
+      if ($package.Value -is [string]) { $package.Value }
       else {
          $i = 0
 
@@ -132,7 +130,8 @@ function InteractingWithWingetData {
       [ValidateSet("Module", "Category", "Package")][string]$by,
       $module,
       $category,
-      $package
+      $package,
+      $source = $null
    )
 
    if (-not (( Get-IterableObject -obj $wingetPackages ).Count -gt 0 )) {
@@ -166,15 +165,14 @@ function InteractingWithWingetData {
                else { "ActionWingetInstall -by 'Category' -obj `$wingetPackages.'$module'.'$item'" }
             }
             "Package" {
-               if ($isModule) { "InteractingWithWingetData -install -by 'Package' -module '$item'" }
-               elseif ($isCategory) { "InteractingWithWingetData -install -by 'Package' -module '$module' -category '$item'" }
+               if ($isModule -or $isCategory) { "InteractingWithWingetData -install -by 'Package' -module $( if($isModule) { "'$item'" } else { "'$module' -category '$item'" } )" }
                else { "WingetInstall -package '$item'" }
             }
          }
       }
       else {
-         if ($isModule) { "InteractingWithWingetData -add -package '$package' -module '$item'" }
-         else { "ActionAddToData -package '$package' -module '$module' -category '$item'" }
+         if ($isModule) { "InteractingWithWingetData -add -package '$package' -module '$item' -source `$source" }
+         else { "ActionAddToData -package '$package' -module '$module' -category '$item' -source `$source" }
       }
 
       [PSCustomObject]@{ Label = $label ; Action = [scriptblock]::Create($action) }
@@ -185,7 +183,7 @@ function InteractingWithWingetData {
          ($menuOptions | Sort-Object -Property Label)
          [PSCustomObject]@{
             Label  = "New"
-            Action = if ($isModule) { { ActionAddToData -package $package } } elseif ($isCategory) { { ActionAddToData -package $package -module $module } }
+            Action = [scriptblock]::Create("ActionAddToData -package `$package $( if ($isCategory) { "-module `$module" } ) -source `$source")
          }
       )
    }
@@ -200,8 +198,7 @@ function InteractingWithWingetInstalledPackages {
       [switch]$uninstall
    )
 
-   $packages = if ($update) { winget list --upgrade-available }
-   else { winget list | Where-Object { $_ -notmatch "(MSIX|ARP)\\" } }
+   $packages = & ([scriptblock]::Create("winget list $( if ($update) { "--upgrade-available" } else { "| Where-Object { `$_ -notmatch '(MSIX|ARP)\\' }" } )"))
 
    $i = index -array $packages -value "^Name\s+Id\s+Version(?:\s+Available)?\s+Source$"
    $title = @("  $($packages[$i])", "  $("_" * $($packages[($i + 1)].Length))")
@@ -211,9 +208,11 @@ function InteractingWithWingetInstalledPackages {
    $menuItems = foreach ($item in $options) {
       if ($update -and $aux -eq ($options.Count - 1)) { break }
 
-      $action = "$(if ($update) { "WingetUpdate" } else { "WingetUninstall" }) -package '$item' -extract"
+      [PSCustomObject]@{
+         Label  = $item
+         Action = [scriptblock]::Create("$(if ($update) { "WingetUpdate" } else { "WingetUninstall" }) -package '$item' -extract")
+      }
 
-      [PSCustomObject]@{ Label = $item ; Action = [scriptblock]::Create($action) }
       $aux++
    }
 
@@ -263,44 +262,67 @@ function ActionWingetInstall {
 
 function SearchWingetPackages {
    $pattern = '^$'
-   $package = $null
+   $source = $null
 
-   Write-Host $global:space
+   Write-Host @"
+$("`n" * 5)
+Options:
+   -d, -desc,-descending               : Sort in Descending Order (Ascending by default)
+   -s, -source ('winget' or 'msstore') : Filter by a specific source
 
-   while ($null -eq $package -or $package -match $pattern) {
+Example: Telegram -d -s winget
+
+"@ -ForegroundColor Green
+
+   while (-not $package -or $package -match $pattern) {
       $package = (Read-Host "What's the magic word? (Or, you know, the package name you want to search for?) or 'exit'/'back'/'cancel'").Trim()
       if ($package -in @("exit", "back", "cancel")) { return }
    }
 
-   $search = winget search -q $package
+   $descPattern = "(?i)\s+-(desc|descending|d)"
+   $sourcePattern = "(?i)\s+-(source|s)\s+(msstore|winget)"
+
+   $descending = $package -match $descPattern
+   $hasSource = $package -match $sourcePattern
+
+   if ($descending) { $package = $package -replace $descPattern, '' }
+   if ($hasSource) {
+      $source = if ($package -match "msstore") { "msstore" } else { "winget" }
+      $package = $package -replace $sourcePattern, ''
+   }
+
+   $action = [scriptblock]::Create("winget search -q '$package' $( if ($hasSource) { "--source '$source'" } )")
+
+   $search = & $action
    if ($search[-1] -eq "No package found matching input criteria.") {
       Write-Host "`nAre you sure that package is a real thing? We've checked everywhere. Nothing." -ForegroundColor Yellow
       return
    }
 
-   if (-not ($search | Select-String -Pattern "^Name\s+Id\s+Version(?:\s+Match)?\s+Source$" -Quiet)) { $search = winget search -q $package }
+   $titlePattern = "^Name\s+Id\s+Version(?:\s+Match)?(?:\s+Source)?$"
+   if (-not ($search | Select-String -Pattern $titlePattern -Quiet)) { $search = & $action }
 
-   $i = index -array $search -value "^Name\s+Id\s+Version(?:\s+Match)?\s+Source$"
+   $i = index -array $search -value $titlePattern
    $title = @("  $($search[$i])", "  $("_" * $($search[($i + 1)].Length))")
    $packages = $search | Select-Object -Skip ($i + 2)
 
    $options = foreach ($item in $packages) {
       [PSCustomObject]@{
          Label  = $item
-         Action = [scriptblock]::Create("SearchWingetPackagesActions -package '$item'")
+         Action = [scriptblock]::Create("SearchWingetPackagesActions -package '$item' -source `$source")
       }
    }
 
-   Show-Menu -options $options -title $title -submenu -pagination
+   Show-Menu -options $options -title $title -submenu -pagination -descending:$descending
    return
 }
 
 function SearchWingetPackagesActions {
-   param ( $package )
+   param ( $package, $source = $null )
 
    Show-Menu -options @(
-      [PSCustomObject]@{ Label = "Add To Data" ; Action = { InteractingWithWingetData -add -package $package } }
-      [PSCustomObject]@{ Label = "Install" ; Action = { WingetInstall -package $package -extract } }
+      [PSCustomObject]@{ Label = "Add To Data" ; Action = { InteractingWithWingetData -add -package $package -source $source } }
+      [PSCustomObject]@{ Label = "Install" ; Action = { WingetInstall -package $package -source $source -extract } }
    ) -title $null -submenu
 
    return
@@ -310,7 +332,8 @@ function ActionAddToData {
    param (
       $package,
       $module,
-      $category
+      $category,
+      $source = $null
    )
 
    $pattern = '^$'
@@ -340,7 +363,7 @@ function ActionAddToData {
 
    if (-not $data.Packages.$module.$category) { $data.Packages.$module | Add-Member -MemberType NoteProperty -Name $category -Value @() }
 
-   $package = ExtractWingetId -package $package
+   $package = ExtractWingetId -package $package -source $source
 
    if ($package -notin $data.Packages.$module.$category) {
       $data.Packages.$module.$category += $package
@@ -386,12 +409,12 @@ function CheckBrokenPackages {
             param ( $item, $k, $v )
             if ($null -eq (GetPackageName -package $v)) {
                Write-Host @"
-`n
-* BROKEN *
-   Module: $module
-   Category: $category
-   Package: $v
-"@ -ForegroundColor Yellow
+* ==> FOUND BROKEN PACKAGE <== *
+   Module   : $module
+   Category : $category
+   Package  : $v
+
+"@ -ForegroundColor Red
             }
          }
       }
@@ -411,18 +434,19 @@ $wingetMenu = if (checkWingetSupport) {
          [PSCustomObject]@{ Label = "Accept Microsoft Store Terms" ; Action = { AcceptMSStoreTerms } }
          [PSCustomObject]@{ Label = "Backup/Export Installed Packages" ; Action = { WingetExport } }
          [PSCustomObject]@{ Label = "Check Broken Packages From JSON Data" ; Action = { CheckBrokenPackages } }
-         [PSCustomObject]@{ Label = "Install Winget on Windows Sandbox (Advanced Users)" ; Action = { Install-WingetOnWSB } }
-         [PSCustomObject]@{ Label = "Install All" ; Action = { ActionWingetInstall -by "All" } }
-         [PSCustomObject]@{ Label = "View All Data" ; Action = { ViewAllWingetData } }
-         [PSCustomObject]@{ Label = "Install a Module" ; Action = { InteractingWithWingetData -install -by "Module" } }
          [PSCustomObject]@{ Label = "Install a Category" ; Action = { InteractingWithWingetData -install -by "Category" } }
+         [PSCustomObject]@{ Label = "Install a Module" ; Action = { InteractingWithWingetData -install -by "Module" } }
          [PSCustomObject]@{ Label = "Install a Package" ; Action = { InteractingWithWingetData -install -by "Package" } }
+         [PSCustomObject]@{ Label = "Install All" ; Action = { ActionWingetInstall -by "All" } }
+         [PSCustomObject]@{ Label = "Install Winget on Windows Sandbox (Advanced Users)" ; Action = { Install-WingetOnWSB } }
          [PSCustomObject]@{ Label = "Restore/Import Packages" ; Action = { WingetImport } }
          [PSCustomObject]@{ Label = "Search" ; Action = { SearchWingetPackages } }
-         [PSCustomObject]@{ Label = "Update All Installed Packages" ; Action = { WingetUpdate } }
-         [PSCustomObject]@{ Label = "Update a Package" ; Action = { InteractingWithWingetInstalledPackages -update } }
          [PSCustomObject]@{ Label = "Uninstall a Package" ; Action = { InteractingWithWingetInstalledPackages -uninstall } }
+         [PSCustomObject]@{ Label = "Update a Package" ; Action = { InteractingWithWingetInstalledPackages -update } }
+         [PSCustomObject]@{ Label = "Update All Installed Packages" ; Action = { WingetUpdate } }
+         [PSCustomObject]@{ Label = "Update Source Repos" ; Action = { winget source update } }
          [PSCustomObject]@{ Label = "Update Winget" ; Action = { Update-Winget } }
+         [PSCustomObject]@{ Label = "View All Data" ; Action = { ViewAllWingetData } }
          if ($global:OSBuild -ge 26100) { [PSCustomObject]@{ Label = "Repair Winget Using Repair-WinGetPackageManager" ; Action = { Repair-WinGetPackageManager -Force -Latest -Verbose } } }
       )
    }
