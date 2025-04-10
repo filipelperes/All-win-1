@@ -11,7 +11,6 @@ function checkWingetSupport {
    return $(if (($ComputerInfo.WindowsVersion) -lt "1809") { $false } else { $true })
    #>
    return $(if (($global:OSVersion -eq 10 -and $global:OSBuild -ge 16299) -or $global:OSVersion -gt 10) { $true } else { $false })
-
 }
 
 function Install-WingetOnWSB {
@@ -53,7 +52,7 @@ function WingetInstall {
    param (
       [string]$package,
       [switch]$extract,
-      $source = $null
+      $source
    )
 
    if ($extract) { $package = ExtractWingetId -package $package -source $source }
@@ -101,7 +100,7 @@ function GetPackageName {
 }
 
 function ExtractWingetId {
-   param ( $package, $source = $null )
+   param ( $package, $source )
 
    $fromMSStore = $package -match "msstore\s*$" -or $source -eq "msstore"
    $fromWinget = $package -match "winget\s*$" -or $source -eq "winget"
@@ -131,7 +130,7 @@ function InteractingWithWingetData {
       $module,
       $category,
       $package,
-      $source = $null
+      $source
    )
 
    if (-not (( Get-IterableObject -obj $wingetPackages ).Count -gt 0 )) {
@@ -188,7 +187,7 @@ function InteractingWithWingetData {
       )
    }
 
-   Show-Menu -options $menuOptions -title $null -submenu -sorted:$add
+   Show-Menu -options $menuOptions -title (GetBoxedText -text "Select a $(if ($isModule) {"Module"} elseif ($isCategory) {"Category (in $module)"} else {"Package (in $module/$category)"})") -submenu -sorted:$add
    return
 }
 
@@ -201,7 +200,8 @@ function InteractingWithWingetInstalledPackages {
    $packages = & ([scriptblock]::Create("winget list $( if ($update) { "--upgrade-available" } else { "| Where-Object { `$_ -notmatch '(MSIX|ARP)\\' }" } )"))
 
    $i = index -array $packages -value "^Name\s+Id\s+Version(?:\s+Available)?\s+Source$"
-   $title = @("  $($packages[$i])", "  $("_" * $($packages[($i + 1)].Length))")
+   $separatorLength = $packages[($i + 1)].Length
+   $title = @("  $($packages[$i])", "  $( "$([char]0x2501)" * $separatorLength )")
    $options = $packages | Select-Object -Skip ($i + 2)
    $aux = 0
 
@@ -216,7 +216,7 @@ function InteractingWithWingetInstalledPackages {
       $aux++
    }
 
-   Show-Menu -options $menuItems -title $title -submenu -pagination
+   Show-Menu -options $menuItems -title $title -submenu -separatorLength $separatorLength # -pagination
    return
 }
 
@@ -260,40 +260,91 @@ function ActionWingetInstall {
    }
 }
 
-function SearchWingetPackages {
-   $pattern = '^$'
-   $source = $null
-
+function HelpWingetSearch {
    Write-Host @"
-$("`n" * 5)
-Options:
-   -d, -desc,-descending               : Sort in Descending Order (Ascending by default)
-   -s, -source ('winget' or 'msstore') : Filter by a specific source
+$((GetBoxedText -text "WINGET SEARCH - CUSTOM FILTER OPTIONS") -join "`n")
 
-Example: Telegram -d -s winget
+OPTIONS:
+   • -d, -desc,-descending                  : Sort results in Descending Order (default: ascending)
+   • -s, -source ('winget'|'msstore')       : Filter results by a specific source
+   • -p, -pages, -pagination [size <int>]   : Enable Pagination Mode
+      └── size <int>  : Number of items per page (default: 27)
 
-"@ -ForegroundColor Green
+NOTES:
+   • All options are optional, but can be combined for advanced filtering.
+   • 'size <int>' option can ONLY be used when '-p, -pages or -pagination' is enabled.
+   • Default behavior: Ascending order without pagination or specific source filtering.
 
-   while (-not $package -or $package -match $pattern) {
-      $package = (Read-Host "What's the magic word? (Or, you know, the package name you want to search for?) or 'exit'/'back'/'cancel'").Trim()
+EXAMPLES:
+   • Telegram -d -s winget -p size 27
+   • Telegram -p size 27
+   • VLC -s "msstore
+   • VLC -d
+
+"@ -ForegroundColor Yellow
+}
+
+function ValidateAndParseWingetSearchInput {
+   param(
+      [string]$package
+   )
+
+   $patterns = [PSCustomObject]@{
+      PackageName = "(?<PackageName>(?:[^\s-](?:(?!\s-).)*)?)?"                                               # Package Name
+      Descending  = "(?:\s+-(?<Descending>d|desc|descending))?"                                               # Sort Descending
+      Source      = "(?:\s+-(?<HasSource>s|source))?(?:\s+(?<Source>winget|msstore))?"                        # Filter by Source
+      Pagination  = "(?:\s+-(?<Pagination>p|pages|pagination))?(?:\s+(?<Size>size))?(?:\s+(?<PageSize>\d+))?" # Pagination Mode
+   }
+
+   $validation = "(?i)$(($patterns.PSObject.Properties.Value) -join '')"
+
+   if ($package -match $validation) {
+      $parsedPackage = [PSCustomObject]@{
+         PackageName = $Matches.PackageName
+         Descending  = ([bool]$Matches.Descending)
+         HasSource   = ([bool]$Matches.HasSource)
+         Source      = $Matches.Source
+         Pagination  = ([bool]$Matches.Pagination)
+         Size        = ([bool]$Matches.Size)
+         PageSize    = [int]$Matches.PageSize
+         IsValid     = $(
+            if (
+               (-not $Matches.PackageName) -or
+               ($Matches.HasSource -and -not $Matches.Source) -or
+               ($Matches.Pagination -and (-not $Matches.Size -or -not $Matches.PageSize))
+            ) { $false }
+            else { $true }
+         )
+      }
+
+      return $parsedPackage
+   }
+   else {
+      throw "Invalid input format. Ensure all filters are complete, e.g., '-p size <number>'."
+      return $null
+   }
+}
+
+function SearchWingetPackages {
+   $parsedPackage = $null
+
+   Write-Host $("`n" * 5)
+
+   while (-not $parsedPackage -or -not $parsedPackage.IsValid) {
+      $package = (Read-Host "What's the magic word? (Or, you know, the package name you want to search for?) or 'exit'/'back'/'cancel' or 'help'").Trim()
       if ($package -in @("exit", "back", "cancel")) { return }
+      if ($package -in @("help", "h")) {
+         HelpWingetSearch
+         continue
+      }
+      $parsedPackage = ValidateAndParseWingetSearchInput -package $package
+      # PrintOnScreen $parsedPackage
    }
 
-   $descPattern = "(?i)\s+-(desc|descending|d)"
-   $sourcePattern = "(?i)\s+-(source|s)\s+(msstore|winget)"
-
-   $descending = $package -match $descPattern
-   $hasSource = $package -match $sourcePattern
-
-   if ($descending) { $package = $package -replace $descPattern, '' }
-   if ($hasSource) {
-      $source = if ($package -match "msstore") { "msstore" } else { "winget" }
-      $package = $package -replace $sourcePattern, ''
-   }
-
-   $action = [scriptblock]::Create("winget search -q '$package' $( if ($hasSource) { "--source '$source'" } )")
-
+   $source = $parsedPackage.Source
+   $action = [scriptblock]::Create("winget search -q '$($parsedPackage.PackageName)' $( if ($parsedPackage.HasSource) { "--source '$source'" } )")
    $search = & $action
+
    if ($search[-1] -eq "No package found matching input criteria.") {
       Write-Host "`nAre you sure that package is a real thing? We've checked everywhere. Nothing." -ForegroundColor Yellow
       return
@@ -303,7 +354,9 @@ Example: Telegram -d -s winget
    if (-not ($search | Select-String -Pattern $titlePattern -Quiet)) { $search = & $action }
 
    $i = index -array $search -value $titlePattern
-   $title = @("  $($search[$i])", "  $("_" * $($search[($i + 1)].Length))")
+   $indent = " " * 2
+   $separatorLength = $search[($i + 1)].Length
+   $title = @("$indent$($search[$i])", "$indent$("$([char]0x2501)" * $separatorLength)")
    $packages = $search | Select-Object -Skip ($i + 2)
 
    $options = foreach ($item in $packages) {
@@ -313,17 +366,18 @@ Example: Telegram -d -s winget
       }
    }
 
-   Show-Menu -options $options -title $title -submenu -pagination -descending:$descending
+   Show-Menu -options $options -title $title -submenu -pagination:($parsedPackage.Pagination) -pageSize $parsedPackage.PageSize -descending:($parsedPackage.Descending) -separatorLength $separatorLength
+
    return
 }
 
 function SearchWingetPackagesActions {
-   param ( $package, $source = $null )
+   param ( $package, $source )
 
    Show-Menu -options @(
       [PSCustomObject]@{ Label = "Add To Data" ; Action = { InteractingWithWingetData -add -package $package -source $source } }
       [PSCustomObject]@{ Label = "Install" ; Action = { WingetInstall -package $package -source $source -extract } }
-   ) -title $null -submenu
+   ) -title (GetBoxedText -text "Winget Search Actions") -submenu
 
    return
 }
@@ -333,7 +387,7 @@ function ActionAddToData {
       $package,
       $module,
       $category,
-      $source = $null
+      $source
    )
 
    $pattern = '^$'

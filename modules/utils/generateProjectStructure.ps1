@@ -15,13 +15,8 @@ function Get-DirectoryStructure {
    $items = Get-ChildItem -Path $path
 
    foreach ($item in $items) {
-      if ($item.PSIsContainer) {
-         "$indent|--- $($item.Name)\" | Out-File -FilePath $outputFilePath -Append -Encoding utf8
-         Get-DirectoryStructure -path $item.FullName -indentLevel ($indentLevel + 4)
-      }
-      else {
-         "$indent|--- $($item.Name)" | Out-File -FilePath $outputFilePath -Append -Encoding utf8
-      }
+      "{0}|---{1}{2}" -f $indent, $item.Name, $(if ($item.PSIsContainer) { "\" }) | Out-File -FilePath $outputFilePath -Append -Encoding utf8
+      if ($item.PSIsContainer) { Get-DirectoryStructure -path $item.FullName -indentLevel ($indentLevel + 4) }
    }
 }
 
@@ -29,6 +24,6 @@ function Get-DirectoryStructure {
 "Windows Sync\" | Out-File -FilePath $outputFilePath -Encoding utf8
 
 # Obtém a estrutura do diretório
-Get-DirectoryStructure -path $projectPath -indentLevel 0
+Get-DirectoryStructure -path $projectPath
 
 Write-Host "A estrutura do projeto foi extraída e salva em $outputFilePath" -ForegroundColor Green
