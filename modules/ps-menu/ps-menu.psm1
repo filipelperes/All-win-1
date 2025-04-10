@@ -122,7 +122,7 @@ function CenterText {
 	)
 	$padding = [math]::Max(0, [math]::Floor(($width - $text.Length) / 2))
 	$line = "$($theme.Horizontal)" * 3
-	return "$($theme.VerticalAndRight)$line$(" " * ($padding - 5))$text$(" " * ($padding - $(if ($separatorLength -ge 110) { 0 } else { 1 })))$line$($theme.VerticalAndLeft)"
+	return "$($theme.VerticalAndRight)$line$(" " * [math]::Max(0, $padding - 5))$text$(" " * [math]::Max(0, $padding - $(if ($separatorLength -ge 110) { 0 } else { 1 })))$line$($theme.VerticalAndLeft)"
 }
 
 function GetBoxedText {

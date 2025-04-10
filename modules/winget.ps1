@@ -461,9 +461,10 @@ function CheckBrokenPackages {
          if ($k -eq "Ignore") { continue }
          engaging -obj $v -processItem {
             param ( $item, $k, $v )
+            Write-Host ((GetBoxedText -text " FOUND BROKEN PACKAGE" -separatorLength 30) -join "`n")
             if ($null -eq (GetPackageName -package $v)) {
                Write-Host @"
-* ==> FOUND BROKEN PACKAGE <== *
+$((GetBoxedText -text "FOUND BROKEN PACKAGE" -separatorLength 33) -join "`n")
    Module   : $module
    Category : $category
    Package  : $v
