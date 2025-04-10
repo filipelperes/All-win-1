@@ -33,6 +33,7 @@ $settingsMenu = [PSCustomObject]@{
         [PSCustomObject]@{ Label = "Open Start Menu Settings"; Action = { Start-Process "ms-settings:personalization-start" } },
         [PSCustomObject]@{ Label = "Open System Properties Settings"; Action = { SystemPropertiesAdvanced -Verb RunAs } },
         [PSCustomObject]@{ Label = "Open Taskbar Settings"; Action = { Start-Process "ms-settings:taskbar" } }
+        [PSCustomObject]@{ Label = "Open Windows Features (Enable/Disable)"; Action = { Start-Process "optionalfeatures.exe" } }
     )
 }
 

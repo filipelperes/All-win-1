@@ -79,6 +79,7 @@
             ],
             "Terminals": [
                 "9MZ1SNWT0N5D",
+                "9N0DX20HK701",
                 "chrisant996.Clink",
                 "JanDeDobbeleer.OhMyPosh",
                 "Microsoft.AIShell",
@@ -113,6 +114,7 @@
                 "rjpcomputing.luaforwindows",
                 "Rustlang.Rust.MSVC",
                 "Rustlang.Rustup",
+                "Safing.Portmaster",
                 "Starship.Starship"
             ],
             "Version Manager": [
@@ -267,7 +269,8 @@
                 "Apache.OpenOffice",
                 "Kingsoft.WPSOffice",
                 "ONLYOFFICE.DesktopEditors",
-                "TheDocumentFoundation.LibreOffice"
+                "TheDocumentFoundation.LibreOffice",
+                "XP8M1ZJCZ99QJW"
             ],
             "Remote Access": [
                 "9WZDNCRFJ3PS",
@@ -289,10 +292,12 @@
                 "9PFHDSF91B9R",
                 "9WZDNCRF0083",
                 "9WZDNCRFJ2WL",
-                "9WZDNCRFJ4Q7",
                 "9WZDNCRFJ32Q",
                 "9WZDNCRFJ364",
+                "9WZDNCRFJ4Q7",
+                "Beeper.Beeper",
                 "Discord.Discord",
+                "Rambox.Rambox.Community",
                 "Telegram.TelegramDesktop",
                 "XPDC2RH70K22MN",
                 "XPFCC4CD725961",
@@ -309,7 +314,8 @@
                 "9NBLGGH4XXVW",
                 "9NBLGGH5R558",
                 "Appest.TickTick",
-                "Doist.Todoist"
+                "Doist.Todoist",
+                "XP99K37G9CWBDC"
             ],
             "Utilities": [
                 "9NBLGGH4S79B",
@@ -333,12 +339,14 @@
                 "Paragon.PartitionManagerCE",
                 "PDFgear.PDFgear",
                 "qBittorrent.qBittorrent",
+                "Rambox.Rambox.Community",
                 "SoftDeluxe.FreeDownloadManager",
                 "SoftwareOK.Q-Dir",
                 "stnkl.EverythingToolbar",
                 "voidtools.Everything",
                 "voidtools.Everything.Cli",
                 "WiresharkFoundation.Wireshark",
+                "XP89DCGQ3K6VLD",
                 "XP8JW0JPNPDN61",
                 "XP9K238D38F6B7",
                 "XPDLNJ2FWVCXR1",
