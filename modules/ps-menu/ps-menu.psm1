@@ -215,6 +215,11 @@ function Menu {
 			[System.Console]::CursorTop = if ($menuArea -gt $windowHeight) { 0 }
 			else { [math]::Max(0, [System.Console]::CursorTop - $menuArea) }
 			DrawMenu -title $title -menuItems $menuItems -shortcuts $shortcuts -color $color -menuPosition $pos -selection $selection -windowHeight $windowHeight -menuArea $menuArea -menuItemsLength $menuItemsLength -Multiselect:$Multiselect -separator:$separator -separatorLength $separatorLength -separatorLine $separatorLine
+			if ($vkeycode -in @(13, 39) -or (($vkeycode -eq 37 -or $character -eq "B") -and ($shortcut -eq "Back"))) {
+				$newTheme = @($box.SingleDash.Light, $box.SingleDash.Heavy, $box.DoubleDash) | Get-Random
+				while ($newTheme -eq $Script:theme) { $newTheme = @($box.SingleDash.Light, $box.SingleDash.Heavy, $box.DoubleDash) | Get-Random }
+				$Script:theme = $newTheme
+			}
 		}
 
 	}
