@@ -26,7 +26,7 @@ function GetPackageName {
       [string]$package
    )
 
-   return (choco info $package | Select-String -Pattern "Title\s*:\s*(.*)").Matches.Groups[1].Value.Trim()
+   return (choco info $package | Select-String -Pattern "Title\s*:\s*([^|]*)").Matches.Groups[1].Value.Trim()
 }
 
 function ChocoInstall {
@@ -58,18 +58,15 @@ function InteractingWithChocoData {
       return
    }
 
-   #$isPackage = $by -eq "Package" -and $module -and $category
-
    $menuOptions = foreach ($item in $chocoPackages) {
       $current = $item
       [PSCustomObject]@{
-         #Label  = if ($isPackage) { (GetPackageName -package $current) } else { $current }
          Label  = $current
          Action = { ChocoInstall -package $current }
       }
    }
 
-   Show-Menu -options $menuOptions -title $null -submenu
+   Show-Menu -options $menuOptions -title (GetBoxedText -text "Select a Package") -submenu
    return
 }
 

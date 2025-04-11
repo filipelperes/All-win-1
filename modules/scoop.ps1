@@ -8,8 +8,8 @@ function CheckScoop {
 }
 
 function Install-Scoop {
-   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
-   Invoke-RestMethod -Uri "https://get.scoop.sh" | Invoke-Expression
+   Set-ExecutionPolicy RemoteSigned -Scope Process -Force
+   Invoke-Expression "& {$(Invoke-RestMethod -Uri "https://get.scoop.sh")} -RunAsAdmin"
 }
 
 function Update-Scoop { scoop update }
@@ -56,18 +56,15 @@ function InteractingWithScoopData {
       return
    }
 
-   #$isPackage = $by -eq "Package" -and $module -and $category
-
    $menuOptions = foreach ($item in $scoopPackages) {
       $current = $item
       [PSCustomObject]@{
-         #Label  = if ($isPackage) { (GetPackageName -package $current) } else { $current }
          Label  = $current
          Action = { ScoopInstall -package $current }
       }
    }
 
-   Show-Menu -options $menuOptions -title $null -submenu
+   Show-Menu -options $menuOptions -title (GetBoxedText -text "Select a Package") -submenu
    return
 }
 
