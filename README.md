@@ -58,7 +58,7 @@ winget install --id Git.Git --accept-package-agreements
 
 **Most features have been tested and are working well, but if you encounter any issues, feel free to report them.**
 
-**Check the `globals.ps1` file to adjust settings for import a file, or directly edit the data in the `data` directory as needed.**
+**Check the `config.ps1` file to adjust settings for import a file, or directly edit the data in the `data` directory as needed.**
 
 ---
 

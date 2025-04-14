@@ -1,5 +1,3 @@
-. "$PSScriptRoot\utils\utils.ps1"
-
 function Install-fnm { winget install --id "Schniz.fnm" --accept-package-agreements }
 function Install-NVMForWindows { winget install --id "CoreyButler.NVMforWindows" --accept-package-agreements }
 function Install-mise-en-place { winget install --id "jdx.mise" --accept-package-agreements }

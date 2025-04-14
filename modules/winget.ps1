@@ -10,7 +10,7 @@ function checkWingetSupport {
    else { $ComputerInfo = $sync.ComputerInfo }
    return $(if (($ComputerInfo.WindowsVersion) -lt "1809") { $false } else { $true })
    #>
-   return $(if (($global:OSVersion -eq 10 -and $global:OSBuild -ge 16299) -or $global:OSVersion -gt 10) { $true } else { $false })
+   return ($global:OSVersion -eq 10 -and $global:OSBuild -ge 16299) -or $global:OSVersion -gt 10
 }
 
 function Install-WingetOnWSB {
@@ -31,8 +31,7 @@ function Update-Winget {
 
 function AcceptMSStoreTerms {
    $region = (Get-Culture).TwoLetterISOLanguageName
-   $sourceAgreements = winget source list --name "msstore" -ErrorAction SilentlyContinue
-   if (-not $sourceAgreements) {
+   if (-not (winget source list --name "msstore" -ErrorAction SilentlyContinue)) {
       winget source add --name "msstore" --accept-source-agreements
       winget settings set region --value $region
    }
@@ -311,7 +310,7 @@ function ValidateAndParseWingetSearchInput {
             if (
                (-not $Matches.PackageName) -or
                ($Matches.HasSource -and -not $Matches.Source) -or
-               ($Matches.Pagination -and (-not $Matches.Size -or -not $Matches.PageSize))
+               ($Matches.Pagination -and -not ($Matches.Size -or $Matches.PageSize))
             ) { $false }
             else { $true }
          )
@@ -462,7 +461,7 @@ function CheckBrokenPackages {
          engaging -obj $v -processItem {
             param ( $item, $k, $v )
             Write-Host ((GetBoxedText -text " FOUND BROKEN PACKAGE" -separatorLength 30) -join "`n")
-            if ($null -eq (GetPackageName -package $v)) {
+            if (-not (GetPackageName -package $v)) {
                Write-Host @"
 $((GetBoxedText -text "FOUND BROKEN PACKAGE" -separatorLength 33) -join "`n")
    Module   : $module
