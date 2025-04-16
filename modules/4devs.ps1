@@ -2,7 +2,7 @@ function Install-fnm { winget install --id "Schniz.fnm" --accept-package-agreeme
 function Install-NVMForWindows { winget install --id "CoreyButler.NVMforWindows" --accept-package-agreements }
 function Install-mise-en-place { winget install --id "jdx.mise" --accept-package-agreements }
 function Install-PyenvForWindows {
-   Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+   Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1" ; Remove-Item "./install-pyenv-win.ps1" -Force
 }
 
 function Install-Pnpm { Invoke-WebRequest "https://get.pnpm.io/install.ps1" -UseBasicParsing | Invoke-Expression }
