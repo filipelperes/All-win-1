@@ -31,8 +31,8 @@ function Get-ShortcutKeys {
          }
       }
       [PSCustomObject]@{
-         Text = "'Escape'/'Q'/'E' to Exit / Quit"
-         keys = @(27, "E", "Q") # 27 = Escape
+         Text = "'Escape'/'Q'/'E'/'X' to Exit / Quit"
+         keys = @(27, "E", "Q", "X") # 27 = Escape
          For  = "Exit / Quit"
       }
    )
