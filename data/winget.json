@@ -134,6 +134,10 @@
             "Virtual Machines": [
                 "Oracle.VirtualBox"
             ],
+            "Browsers": [
+                "Firstversionist.Polypane",
+                "Responsively.ResponsivelyApp"
+            ],
             "Ignore": []
         },
         "Personal": {
