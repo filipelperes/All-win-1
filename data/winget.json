@@ -107,6 +107,7 @@
                 "Erlang.ErlangOTP",
                 "Figma.Figma",
                 "GoLang.Go",
+                "hoppscotch.Hoppscotch",
                 "HTTPie.HTTPie",
                 "Insomnia.Insomnia",
                 "LLVM.clangd",
