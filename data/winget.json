@@ -143,6 +143,11 @@
             "Ignore": []
         },
         "Personal": {
+            "Audio": [
+                "Audacity.Audacity",
+                "Ocenaudio.Ocenaudio",
+                "XP8K0J757HHRDW"
+            ],
             "Bibles": [
                 "9PPRWS532N91",
                 "9WZDNCRDK3WP",
