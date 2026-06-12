@@ -1,10 +1,10 @@
 <# Modules for CompareBy, PrintOnScreen, RemoveBy #>
-function IsIterable {
+function Test-IsIterable {
     param ($obj)
     return $obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary] -or $obj -is [PSCustomObject] -or $obj -is [array] -or $obj -is [object[]]
 }
 
-function IsNumber {
+function Test-IsNumber {
     param ($value)
     return $value -is [int] -or $value -is [long] -or $value -is [float] -or $value -is [double] -or $value -is [decimal]
 }
@@ -15,7 +15,7 @@ function Get-IterableObject {
     return $(
         if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { $obj.GetEnumerator() }
         elseif ($obj -is [PSCustomObject]) { $obj.PSObject.Properties }
-        elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (IsNumber -value $obj)) { $obj }
+        elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (Test-IsNumber -value $obj)) { $obj }
         else { $null }
     )
 }
@@ -80,7 +80,7 @@ function Get-Values {
     return $(
         if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { $obj.Values }
         elseif ($obj -is [PSCustomObject]) { $obj.PSObject.Properties.Value }
-        elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (IsNumber -value $obj)) { $obj }
+        elseif ($obj -is [array] -or $obj -is [object[]] -or $obj -is [string] -or (Test-IsNumber -value $obj)) { $obj }
         else { $null }
     )
 }
@@ -171,7 +171,7 @@ function CompareByRecursive {
         Invoke-ObjectForEach -obj $inputObj -processItem {
             param ( $item, $k, $v )
 
-            $sub = if ((IsIterable -obj $v) -and ($k -in $refKeys)) {
+            $sub = if ((Test-IsIterable -obj $v) -and ($k -in $refKeys)) {
                 CompareByRecursive -by $by -equals:$equals -inputObj $v -ref $ref.$k
             }
             else { $null }
@@ -216,7 +216,7 @@ function PrintOnScreenRecursive {
             "{0}{1}" -f
             $indent,
             $(
-                if ($null -ne $k) { "$k$(if (-not (IsIterable $v) -and $null -ne $v) { " = $v" })" }
+                if ($null -ne $k) { "$k$(if (-not (Test-IsIterable $v) -and $null -ne $v) { " = $v" })" }
                 else { $v }
             )
             # "Item: {0}        Type: {1}`nName: {2}        Type: {3}`nKey: {4}        Type: {5}`nValue: {6}    Type: {7}`n`n" -f
@@ -226,7 +226,7 @@ function PrintOnScreenRecursive {
             # $( if ($null -eq $item.Value) { "null" } else { $item.Value } ), $( if ($null -eq $item.Value) { "null" } else { $item.Value.GetType() } )
         )
 
-        if (IsIterable -obj $v) { PrintOnScreenRecursive -obj $v -depth ($depth + 1) -wget:$wget }
+        if (Test-IsIterable -obj $v) { PrintOnScreenRecursive -obj $v -depth ($depth + 1) -wget:$wget }
     }
 
     <#
@@ -246,7 +246,7 @@ function PrintOnScreenRecursive {
             "{0}{1}" -f
             $indent,
             $(
-                if ($null -ne $k) { "$k$(if (-not (IsIterable $v) -and $null -ne $v) { " = $v" })" }
+                if ($null -ne $k) { "$k$(if (-not (Test-IsIterable $v) -and $null -ne $v) { " = $v" })" }
                 else { $v }
             )
             #"Item: {0}        Type: {1}`nName: {2}        Type: {3}`nKey: {4}        Type: {5}`nValue: {6}    Type: {7}`n`n" -f
@@ -256,7 +256,7 @@ function PrintOnScreenRecursive {
             #$( if ($null -eq $_.Value) { "null" } else { $_.Value } ), $( if ($null -eq $_.Value) { "null" } else { $_.Value.GetType() } )
         )
 
-        if(IsIterable -obj $v)  { PrintOnScreenRecursive -obj $v -depth ($depth + 1) -wget:$wget }
+        if(Test-IsIterable -obj $v)  { PrintOnScreenRecursive -obj $v -depth ($depth + 1) -wget:$wget }
     }
     #>
 }
@@ -286,7 +286,7 @@ function RemoveByRecursive {
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
 
-        $sub = if (IsIterable -obj $v) { RemoveByRecursive -obj $v -props $props -removeBy $removeBy } else { $null }
+        $sub = if (Test-IsIterable -obj $v) { RemoveByRecursive -obj $v -props $props -removeBy $removeBy } else { $null }
 
         $match = switch ($removeBy) {
             "Key" { $k -notin $props }
@@ -336,7 +336,7 @@ function GetCommonOrUniqueRecursive {
         Invoke-ObjectForEach -obj $inputObj -processItem {
             param ( $item, $k, $v )
 
-            $sub = if ((IsIterable -obj $v) -and ($k -in $refKeys)) {
+            $sub = if ((Test-IsIterable -obj $v) -and ($k -in $refKeys)) {
                 GetCommonOrUniqueRecursive -search $search -by $by -inputObj $v -ref $ref.$k
             }
             else { $null }
@@ -382,7 +382,7 @@ function GetAllRecursive {
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
 
-        $sub = if (IsIterable -obj $v) { GetAllRecursive -obj $v -by $by } else { $null }
+        $sub = if (Test-IsIterable -obj $v) { GetAllRecursive -obj $v -by $by } else { $null }
 
         $value = if ( $null -ne $sub -and $null -ne $k ) { @{ $k = $sub } }
         elseif ( $null -ne $sub -and $null -eq $k ) { $sub }
@@ -409,7 +409,7 @@ function ReplaceAllRecursive {
 
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
-        $sub = if (IsIterable -obj $v) { ReplaceAllRecursive -obj $v -from $from -to $to } else { $null }
+        $sub = if (Test-IsIterable -obj $v) { ReplaceAllRecursive -obj $v -from $from -to $to } else { $null }
         if ($v -is [string] -and $v -match $from) { $v = $v -replace $from, $to }
         $value = if ( $null -ne $sub ) { $sub } elseif ( $null -ne $v ) { $v } else { $item }
         Add-ToResult -result ([ref]$result) -key $k -value $value -obj $obj
@@ -418,7 +418,7 @@ function ReplaceAllRecursive {
     return $result
 }
 
-function HashtableToPSCustomObject {
+function Convert-HashtableToPSCustomObject {
     param ( $obj )
 
     return HashtableToPSCustomObjectRecursive -obj $obj
@@ -432,7 +432,7 @@ function HashtableToPSCustomObjectRecursive {
 
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
-        $sub = if (IsIterable -obj $v) { HashtableToPSCustomObjectRecursive -obj $v } else { $null }
+        $sub = if (Test-IsIterable -obj $v) { HashtableToPSCustomObjectRecursive -obj $v } else { $null }
         $value = if ( $null -ne $sub ) { $sub } elseif ( $null -ne $v ) { $v }
         if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { $result | Add-Member -MemberType NoteProperty -Name $k -Value $value }
         else { Add-ToResult -result ([ref]$result) -key $k -value $value -obj $obj }
@@ -460,7 +460,7 @@ function SortAllRecursive {
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
 
-        $sub = if (IsIterable -obj $v) { SortAllRecursive -obj $v -order $order -depth ($depth + 1) } else { $null }
+        $sub = if (Test-IsIterable -obj $v) { SortAllRecursive -obj $v -order $order -depth ($depth + 1) } else { $null }
 
         $v = if ($null -eq $sub) { $v }
         elseif ($sub -is [array] -or $sub -is [object[]]) { SortArrayOrObjectArray -array $sub -order $order }

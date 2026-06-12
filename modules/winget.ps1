@@ -443,7 +443,7 @@ function ActionAddToData {
    return
 }
 
-function CheckBrokenPackages {
+function Test-BrokenPackages {
    if (-not (( Get-IterableObject -obj $wingetPackages ).Count -gt 0 )) {
       Write-Host "$global:space`Data lost and found? More like just 'lost' here. Nothing to see. Let's see if we can 'find' something by checking that path! (Check path!)" -ForegroundColor Yellow
       return
@@ -487,7 +487,7 @@ $wingetMenu = if (Test-WingetSupport) {
       Submenu     = @(
          [PSCustomObject]@{ Label = "Accept Microsoft Store Terms" ; Action = { AcceptMSStoreTerms } }
          [PSCustomObject]@{ Label = "Backup/Export Installed Packages" ; Action = { WingetExport } }
-         [PSCustomObject]@{ Label = "Check Broken Packages From JSON Data" ; Action = { CheckBrokenPackages } }
+         [PSCustomObject]@{ Label = "Check Broken Packages From JSON Data" ; Action = { Test-BrokenPackages } }
          [PSCustomObject]@{ Label = "Install a Category" ; Action = { InteractingWithWingetData -install -by "Category" } }
          [PSCustomObject]@{ Label = "Install a Module" ; Action = { InteractingWithWingetData -install -by "Module" } }
          [PSCustomObject]@{ Label = "Install a Package" ; Action = { InteractingWithWingetData -install -by "Package" } }

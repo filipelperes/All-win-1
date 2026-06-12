@@ -16,7 +16,7 @@ $props = @(
     "OneDriveConsumer"
 )
 
-function CheckRef { if (Test-Path -Path $envVarsFile) { return $true } else { return $false } }
+function Test-EnvVarsFileExists { return (Test-Path -Path $envVarsFile) }
 function GetEnvironmentVariables { return GetJsonObject -fileName "environmentvariables" }
 
 function EnvironmentVariableTarget {
