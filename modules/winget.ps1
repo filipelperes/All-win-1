@@ -56,7 +56,7 @@ function WingetInstall {
 
    if ($extract) { $package = ExtractWingetId -package $package -source $source }
 
-   Write-Output "$("`n" * 3)Installing $((GetPackageName -package $package -line) -replace "Found ", '')"
+   Write-Output "$("`n" * 3)Installing $((Get-WingetPackageName -package $package -line) -replace "Found ", '')"
    winget install --id $package --accept-package-agreements
 }
 
@@ -68,7 +68,7 @@ function WingetUninstall {
 
    if ($extract) { $package = ExtractWingetId -package $package }
 
-   Write-Output "$("`n" * 3)Uninstalling $((GetPackageName -package $package -line) -replace "Found ", '')"
+   Write-Output "$("`n" * 3)Uninstalling $((Get-WingetPackageName -package $package -line) -replace "Found ", '')"
    winget uninstall --id $package --all
 }
 
@@ -80,22 +80,22 @@ function WingetUpdate {
 
    if ($extract) { $package = ExtractWingetId -package $package }
 
-   Write-Output "$("`n" * 3)Updating $((GetPackageName -package $package -line) -replace "Found ", '')"
+   Write-Output "$("`n" * 3)Updating $((Get-WingetPackageName -package $package -line) -replace "Found ", '')"
    & ([scriptblock]::Create("winget upgrade $(if ($package -eq "all") { "--all --uninstall-previous" } else { "--id '$package'" }) --accept-package-agreements"))
 }
 
-function GetPackageName {
-   param (
-      [string]$package,
-      [switch]$line
-   )
+function Get-WingetPackageName {
+    param (
+        [string]$package,
+        [switch]$line
+    )
 
-   $name = winget show $package | Select-String -Pattern "Found\s*(.+?)\s*\["
-   return $(
-      if ($null -eq $name) { $null }
-      elseif ($line) { $name.Line }
-      else { $name.Matches.Groups[1].Value }
-   )
+    $name = winget show $package | Select-String -Pattern "Found\s*(.+?)\s*\["
+    return $(
+        if ($null -eq $name) { $null }
+        elseif ($line) { $name.Line }
+        else { $name.Matches.Groups[1].Value }
+    )
 }
 
 function ExtractWingetId {
@@ -112,7 +112,7 @@ function ExtractWingetId {
          $i = 0
 
          while ($true) {
-            $name = GetPackageName -package $package.Value[$i]
+            $name = Get-WingetPackageName -package $package.Value[$i]
             if (-not $name) { $i++ } else { break }
          }
 
@@ -153,8 +153,8 @@ function InteractingWithWingetData {
    $menuOptions = foreach ($item in $options) {
       # $current = $item
       # $label  = $item
-      # $label  = if ($isPackage) { (GetPackageName -package $item) } else { $item }
-      $label = if ($isPackage -and $item -match '^((9|X)[A-Z0-9]+)$') { ((GetPackageName -package $item -line) -replace "Found ", '') } else { $item }
+      # $label  = if ($isPackage) { (Get-WingetPackageName -package $item) } else { $item }
+      $label = if ($isPackage -and $item -match '^((9|X)[A-Z0-9]+)$') { ((Get-WingetPackageName -package $item -line) -replace "Found ", '') } else { $item }
       $action = if ($install) {
          switch ($by) {
             "Module" { "ActionWingetInstall -by 'Module' -obj `$wingetPackages.'$item'" }
@@ -461,7 +461,7 @@ function CheckBrokenPackages {
          engaging -obj $v -processItem {
             param ( $item, $k, $v )
             Write-Host ((GetBoxedText -text " FOUND BROKEN PACKAGE" -separatorLength 30) -join "`n")
-            if (-not (GetPackageName -package $v)) {
+            if (-not (Get-WingetPackageName -package $v)) {
                Write-Host @"
 $((GetBoxedText -text "FOUND BROKEN PACKAGE" -separatorLength 33) -join "`n")
    Module   : $module

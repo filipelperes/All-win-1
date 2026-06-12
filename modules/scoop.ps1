@@ -23,12 +23,12 @@ function ScoopImport {
    scoop import $global:scoopJSONFileBkp
 }
 
-function GetPackageName {
-   param (
-      [string]$package
-   )
+function Get-ScoopPackageName {
+    param (
+        [string]$package
+    )
 
-   return (scoop info $package | Select-String -Pattern "Name\s*:\s*(.*)").Matches.Groups[1].Value.Trim()
+    return (scoop info $package | Select-String -Pattern "Name\s*:\s*(.*)").Matches.Groups[1].Value.Trim()
 }
 
 function ScoopUpdate {

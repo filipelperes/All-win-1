@@ -21,12 +21,12 @@ function ChocoImport {
    choco install $global:chocoConfigFileBkp -y
 }
 
-function GetPackageName {
-   param (
-      [string]$package
-   )
+function Get-ChocoPackageName {
+    param (
+        [string]$package
+    )
 
-   return (choco info $package | Select-String -Pattern "Title\s*:\s*([^|]*)").Matches.Groups[1].Value.Trim()
+    return (choco info $package | Select-String -Pattern "Title\s*:\s*([^|]*)").Matches.Groups[1].Value.Trim()
 }
 
 function ChocoInstall {

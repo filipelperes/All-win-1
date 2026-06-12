@@ -1,3 +1,5 @@
+. "$PSScriptRoot\utils\json.ps1"
+
 $global:nodePackages = (GetJsonObject -fileName "packages").Packages.Node
 $global:pipPackages = (GetJsonObject -fileName "packages").Packages.Pip
 

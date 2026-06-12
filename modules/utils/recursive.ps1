@@ -210,7 +210,7 @@ function PrintOnScreenRecursive {
         param ( $item, $k, $v )
         $indent = "    " * $depth
 
-        $v = if ($wget -and $v -is [string] -and $v -match $msStorePattern) { ((GetPackageName -package $v -line) -replace "Found ", '') } else { $v }
+        $v = if ($wget -and $v -is [string] -and $v -match $msStorePattern) { ((Get-WingetPackageName -package $v -line) -replace "Found ", '') } else { $v }
 
         Write-Output (
             "{0}{1}" -f
@@ -239,7 +239,7 @@ function PrintOnScreenRecursive {
         $v = $ipair.Value
         $indent = "    " * $depth
 
-        $v = if ($wget -and $v -is [string] -and $v -match $msStorePattern) { ((GetPackageName -package $v -line) -replace "Found ", '') } else { $v }
+        $v = if ($wget -and $v -is [string] -and $v -match $msStorePattern) { ((Get-WingetPackageName -package $v -line) -replace "Found ", '') } else { $v }
 
 
         Write-Output (
