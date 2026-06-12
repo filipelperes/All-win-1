@@ -1,4 +1,4 @@
-$envVarsData = [PSCustomObject]@{
+$data_environmentvariables = [PSCustomObject]@{
     ref = [PSCustomObject]@{
         Machine = [PSCustomObject]@{
             ComSpec                 = "C:\Windows\system32\cmd.exe"

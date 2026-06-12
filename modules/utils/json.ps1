@@ -3,6 +3,12 @@ function GetJsonObject {
       [string]$fileName
    )
 
+   $ps1Path = "$PSScriptRoot\..\..\data\$fileName.ps1"
+   if (Test-Path $ps1Path) {
+      . $ps1Path
+      return (Get-Variable -Name "data_$fileName" -ValueOnly -ErrorAction Stop)
+   }
+
    return Get-Content -Path "$PSScriptRoot\..\..\data\$fileName.json" -Raw | ConvertFrom-Json
 }
 

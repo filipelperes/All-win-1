@@ -1,4 +1,4 @@
-$wingetData = [PSCustomObject]@{
+$data_winget = [PSCustomObject]@{
     Packages = [PSCustomObject]@{
         Essentials = [PSCustomObject]@{
             Java = @(

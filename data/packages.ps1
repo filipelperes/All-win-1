@@ -1,4 +1,4 @@
-$packagesData = [PSCustomObject]@{
+$data_packages = [PSCustomObject]@{
     Packages = [PSCustomObject]@{
         Node = @(
             "@apollo/client"

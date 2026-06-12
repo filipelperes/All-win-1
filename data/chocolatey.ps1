@@ -1,4 +1,4 @@
-$chocolateyData = [PSCustomObject]@{
+$data_chocolatey = [PSCustomObject]@{
     Packages = @(
         "dart-sdk"
         "elixir"
