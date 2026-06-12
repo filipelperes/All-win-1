@@ -35,7 +35,7 @@ Import-Module "$PSScriptRoot\modules\ps-menu\ps-menu.psd1"
 . "$PSScriptRoot\modules\tweaks.ps1"
 . "$PSScriptRoot\modules\settings.ps1"
 
-if ((checkWingetSupport) -and -not (Get-Command -Name winget -ErrorAction SilentlyContinue)) {
+if ((Test-WingetSupport) -and -not (Get-Command -Name winget -ErrorAction SilentlyContinue)) {
     Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
 }
 

@@ -3,7 +3,7 @@
 
 $chocoPackages = (GetJsonObject -fileName "chocolatey").Packages
 
-function CheckChocolatey {
+function Test-ChocolateyInstalled {
    if (Get-Command choco -ErrorAction SilentlyContinue) { return $true } else { return $false }
 }
 
@@ -70,7 +70,7 @@ function InteractingWithChocoData {
    return
 }
 
-$chocolateyMenu = if (-not (CheckChocolatey)) {
+$chocolateyMenu = if (-not (Test-ChocolateyInstalled)) {
    [PSCustomObject]@{ Label = "Install Chocolatey" ; Action = { Install-Chocolatey } }
 }
 else {

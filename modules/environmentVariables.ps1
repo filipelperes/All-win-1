@@ -81,7 +81,7 @@ function GetEnvironmentVariable {
 function RemoveRefValues {
     param ( $obj )
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
         foreach ($i in (Get-IterableObject -obj $v)) {
             $ipair = GetItemKeyValuePair -item $i
@@ -115,7 +115,7 @@ function ImportEnvironmentVariables {
 
     $data = GetEnvironmentVariables
     $toAdd = ReplaceAll -obj (RemoveBy -obj (CompareBy -inputObj $data.personal -ref $data.ref) -props $props) -from "johndoe" -to $env:USERNAME
-    engaging -obj $toAdd -processItem {
+    Invoke-ObjectForEach -obj $toAdd -processItem {
         param ( $item, $k, $v )
 
         if (-not ((Get-IterableObject $v).Count -gt 0)) { continue }

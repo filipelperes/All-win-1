@@ -3,7 +3,7 @@
 
 $scoopPackages = (GetJsonObject -fileName "scoop").Packages
 
-function CheckScoop {
+function Test-ScoopInstalled {
    if (Get-Command scoop -ErrorAction SilentlyContinue) { return $true } else { return $false }
 }
 
@@ -68,7 +68,7 @@ function InteractingWithScoopData {
    return
 }
 
-$scoopMenu = if (-not (CheckScoop)) {
+$scoopMenu = if (-not (Test-ScoopInstalled)) {
    [PSCustomObject]@{ Label = "Install Scoop" ; Action = { Install-Scoop } }
 }
 else {

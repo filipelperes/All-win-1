@@ -4,7 +4,7 @@
 
 $wingetPackages = (GetJsonObject -fileName "winget").Packages
 
-function checkWingetSupport {
+function Test-WingetSupport {
    <#
    if ($null -eq $sync.ComputerInfo) { $ComputerInfo = Get-ComputerInfo -ErrorAction Stop }
    else { $ComputerInfo = $sync.ComputerInfo }
@@ -232,24 +232,24 @@ function ActionWingetInstall {
 
    Write-Host $("`n" * 5)
 
-   engaging -obj $obj -processItem {
+   Invoke-ObjectForEach -obj $obj -processItem {
       param ( $item, $k, $v )
       #$module = $k
       switch ($by) {
          "Category" { WingetInstall -package $v }
          "Module" {
             if ($k -eq "Ignore") { continue }
-            engaging -obj $v -processItem {
+            Invoke-ObjectForEach -obj $v -processItem {
                param ( $item, $k, $v )
                WingetInstall -package $v
             }
          }
          "All" {
-            engaging -obj $v -processItem {
+            Invoke-ObjectForEach -obj $v -processItem {
                param ( $item, $k, $v )
                if ($k -eq "Ignore") { continue }
                #$category = $k
-               engaging -obj $v -processItem {
+               Invoke-ObjectForEach -obj $v -processItem {
                   param ( $item, $k, $v )
                   WingetInstall -package $v
                }
@@ -426,10 +426,10 @@ function ActionAddToData {
          ($data.Packages.$module.$category.Count -gt 1)
       ) { $data.Packages.$module.$category = ( $data.Packages.$module.$category | Sort-Object ) }
 
-      # engaging -obj $data.Packages -processItem {
+      # Invoke-ObjectForEach -obj $data.Packages -processItem {
       #    param ( $item, $k, $v )
       #    $module = $k
-      #    engaging -obj $v -processItem {
+      #    Invoke-ObjectForEach -obj $v -processItem {
       #       param ( $item, $k, $v )
       #       if (($v -is [array] -or $v -is [object[]]) -and $v.Count -gt 1) { $data.Packages.$module.$k = $v | Sort-Object }
       #    }
@@ -451,14 +451,14 @@ function CheckBrokenPackages {
 
    Write-Host $("`n" * 5)
 
-   engaging -obj $wingetPackages -processItem {
+   Invoke-ObjectForEach -obj $wingetPackages -processItem {
       param ( $item, $k, $v )
       $module = $k
-      engaging -obj $v -processItem {
+      Invoke-ObjectForEach -obj $v -processItem {
          param ( $item, $k, $v )
          $category = $k
          if ($k -eq "Ignore") { continue }
-         engaging -obj $v -processItem {
+         Invoke-ObjectForEach -obj $v -processItem {
             param ( $item, $k, $v )
             Write-Host ((GetBoxedText -text " FOUND BROKEN PACKAGE" -separatorLength 30) -join "`n")
             if (-not (Get-WingetPackageName -package $v)) {
@@ -480,7 +480,7 @@ function ViewAllWingetData {
    PrintOnScreen $wingetPackages -wget
 }
 
-$wingetMenu = if (checkWingetSupport) {
+$wingetMenu = if (Test-WingetSupport) {
    [PSCustomObject]@{
       Description = "Winget"
       Label       = "Winget"

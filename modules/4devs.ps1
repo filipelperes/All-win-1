@@ -37,7 +37,7 @@ function Import-GlobalNodePackages {
 }
 
 function Install-FishShellOnGitBash {
-   if (-not (checkWingetSupport)) {
+   if (-not (Test-WingetSupport)) {
       Write-Host "$global:space`Winget is not supported on this system." -ForegroundColor Yellow
       Start-Process "https://gist.github.com/filipelperes/212abbfd422b4f3c77a04a26f4729c4c"
       return

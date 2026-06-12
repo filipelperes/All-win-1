@@ -67,7 +67,7 @@ function GetItemKey {
 function Get-KeyByValue {
     param ( $obj, $value )
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
         if ($v -eq $value) { return $k }
     }
@@ -115,7 +115,7 @@ function Add-ToResult {
     else { $result.Value += @( $value ) }
 }
 
-function engaging {
+function Invoke-ObjectForEach {
     param (
         $obj,
         [scriptblock]$processItem
@@ -168,7 +168,7 @@ function CompareByRecursive {
         $result += $inputObj | Where-Object { if ($equals) { $_ -in $ref } else { $_ -notin $ref } }
     }
     else {
-        engaging -obj $inputObj -processItem {
+        Invoke-ObjectForEach -obj $inputObj -processItem {
             param ( $item, $k, $v )
 
             $sub = if ((IsIterable -obj $v) -and ($k -in $refKeys)) {
@@ -206,7 +206,7 @@ function PrintOnScreenRecursive {
     if ($null -eq $obj) { return }
     $msStorePattern = '^((9|X)[A-Z0-9]+)$'
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
         $indent = "    " * $depth
 
@@ -283,7 +283,7 @@ function RemoveByRecursive {
 
     $result = CreateResult $obj
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
 
         $sub = if (IsIterable -obj $v) { RemoveByRecursive -obj $v -props $props -removeBy $removeBy } else { $null }
@@ -333,7 +333,7 @@ function GetCommonOrUniqueRecursive {
         $result += $inputObj | Where-Object { if ($search -eq "Common") { $_ -in $ref } else { $_ -notin $ref } }
     }
     else {
-        engaging -obj $inputObj -processItem {
+        Invoke-ObjectForEach -obj $inputObj -processItem {
             param ( $item, $k, $v )
 
             $sub = if ((IsIterable -obj $v) -and ($k -in $refKeys)) {
@@ -379,7 +379,7 @@ function GetAllRecursive {
 
     $result = [System.Collections.Generic.List[object]]::new()
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
 
         $sub = if (IsIterable -obj $v) { GetAllRecursive -obj $v -by $by } else { $null }
@@ -407,7 +407,7 @@ function ReplaceAllRecursive {
 
     $result = CreateResult $obj
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
         $sub = if (IsIterable -obj $v) { ReplaceAllRecursive -obj $v -from $from -to $to } else { $null }
         if ($v -is [string] -and $v -match $from) { $v = $v -replace $from, $to }
@@ -430,7 +430,7 @@ function HashtableToPSCustomObjectRecursive {
     $result = if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { [PSCustomObject]::new() }
     else { CreateResult -obj $obj }
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
         $sub = if (IsIterable -obj $v) { HashtableToPSCustomObjectRecursive -obj $v } else { $null }
         $value = if ( $null -ne $sub ) { $sub } elseif ( $null -ne $v ) { $v }
@@ -457,7 +457,7 @@ function SortAllRecursive {
 
     $result = CreateResult -obj $obj
 
-    engaging -obj $obj -processItem {
+    Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
 
         $sub = if (IsIterable -obj $v) { SortAllRecursive -obj $v -order $order -depth ($depth + 1) } else { $null }

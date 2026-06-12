@@ -1,7 +1,7 @@
 function Install-Windhawk { winget install --id "RamenSoftware.Windhawk" --accept-package-agreements }
 
 function Install-SecureUxTheme {
-   if (-not (CheckScoop)) {
+   if (-not (Test-ScoopInstalled)) {
       while (-not $dependencies -or $dependencies -notmatch $global:yesNoPattern) {
          $dependencies = (Read-Host "Do you agree to install scoop? (yes/no)").Trim().ToLower()
          switch -Regex ($dependencies) {
