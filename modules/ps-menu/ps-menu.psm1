@@ -208,7 +208,8 @@ function Menu {
 			HandleKeyPress -vkeycode $vkeycode -character $character -pos ([ref]$pos) -menuItemsLength $menuItemsLength -selection ([ref]$selection) -Multiselect:$Multiselect -title ([ref]$title) -separatorLine ([ref]$separatorLine) -separator $separator -separatorLength $separatorLength -shortcuts ([ref]$shortcuts)
 
 			if ($shortcuts -and ($shortcuts.Keys -contains $character -or $shortcuts.Keys -contains $vkeycode)) {
-				$shortcut = ($shortcuts.Shortcuts.Where({ $_.Keys -contains $(if ($shortcuts.Keys -contains $character) { $character } else { $vkeycode }) })).For
+				$matchedItem = $shortcuts.Shortcuts | Where-Object { $_.Keys -contains $(if ($shortcuts.Keys -contains $character) { $character } else { $vkeycode }) }
+				$shortcut = if ($matchedItem) { $matchedItem[0].For } else { $null }
 			}
 
 			$windowHeight = $host.UI.RawUI.WindowSize.Height - 1

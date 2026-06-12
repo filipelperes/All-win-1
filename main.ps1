@@ -1,4 +1,9 @@
-﻿if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+﻿if ($PSVersionTable.PSVersion.Major -lt 3) {
+    Write-Warning "This script requires PowerShell 3.0 or later. Current version: $($PSVersionTable.PSVersion)"
+    exit
+}
+
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Warning "This script requires administrator privileges. Please run as Administrator."
     exit
 }
