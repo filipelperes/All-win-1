@@ -121,6 +121,14 @@ function ExtractWingetId {
    )
 }
 
+<#
+.SYNOPSIS
+    Interactively browses Winget data and installs or adds packages.
+.DESCRIPTION
+    Walks the user through Module → Category → Package selection and performs
+    the chosen action (install or add to data). Recursively calls itself for
+    each navigation level.
+#>
 function InteractingWithWingetData {
    param (
       [switch]$install,
@@ -132,62 +140,129 @@ function InteractingWithWingetData {
       $source
    )
 
-   if (-not (( Get-IterableObject -obj $wingetPackages ).Count -gt 0 )) {
-      Write-Host "$global:space`Data lost and found? More like just 'lost' here. Nothing to see. Let's see if we can 'find' something by checking that path! (Check path!)" -ForegroundColor Yellow
-      return
-   }
+   if (-not (Test-HasWingetData)) { return }
 
-   $isModule = -not $module
-   $isCategory = $module -and -not $category
-   $isPackage = $install -and $by -eq "Package" -and $module -and $category
+   $mode = Get-WingetInteractionMode -install:$install -module $module -category $category -by $by
+   $options = Get-WingetMenuTargetItems -wingetPackages $wingetPackages -mode $mode -module $module -category $category
 
-   $options = if ($isModule) { $wingetPackages.PSObject.Properties.Name }
-   elseif ($isCategory) { $wingetPackages.$module.PSObject.Properties.Name | Where-Object { $_ -ne "ignore" } }
-   else { $wingetPackages.$module.$category }
-
-   if ($isPackage -and -not ($options.Count -gt 0)) {
+   if ($mode.IsPackage -and -not ($options.Count -gt 0)) {
       Write-Warning "Nothing here, folks!"
       return
    }
 
-   $menuOptions = foreach ($item in $options) {
-      # $current = $item
-      # $label  = $item
-      # $label  = if ($isPackage) { (Get-WingetPackageName -package $item) } else { $item }
-      $label = if ($isPackage -and $item -match '^((9|X)[A-Z0-9]+)$') { ((Get-WingetPackageName -package $item -line) -replace "Found ", '') } else { $item }
-      $action = if ($install) {
-         switch ($by) {
-            "Module" { "ActionWingetInstall -by 'Module' -obj `$wingetPackages.'$item'" }
-            "Category" {
-               if ($isModule) { "InteractingWithWingetData -install -by 'Category' -module '$item'" }
-               else { "ActionWingetInstall -by 'Category' -obj `$wingetPackages.'$module'.'$item'" }
-            }
-            "Package" {
-               if ($isModule -or $isCategory) { "InteractingWithWingetData -install -by 'Package' -module $( if($isModule) { "'$item'" } else { "'$module' -category '$item'" } )" }
-               else { "WingetInstall -package '$item'" }
-            }
+   $menuOptions = New-WingetMenuItems -options $options -mode $mode -install:$install -add:$add -module $module -category $category -package $package -source $source
+
+   if ($add) {
+      $menuOptions = Add-WingetNewOption -menuOptions $menuOptions -mode $mode -package $package -module $module -source $source
+   }
+
+   $titleText = Get-WingetMenuTitle -mode $mode -module $module -category $category
+   Show-Menu -options $menuOptions -title (GetBoxedText -text $titleText) -submenu -sorted:$add
+}
+
+# ─── helpers ─────────────────────────────────────────────────────────────────
+
+function Test-HasWingetData {
+   $hasData = (Get-IterableObject -obj $wingetPackages).Count -gt 0
+   if (-not $hasData) {
+      Write-Host "$global:space`Data lost and found? More like just 'lost' here. Nothing to see. Let's see if we can 'find' something by checking that path! (Check path!)" -ForegroundColor Yellow
+   }
+   return $hasData
+}
+
+function Get-WingetInteractionMode {
+   param ([switch]$install, $module, $category, [string]$by)
+   return [PSCustomObject]@{
+      IsModule   = -not $module
+      IsCategory = [bool]($module -and -not $category)
+      IsPackage  = [bool]($install -and $by -eq "Package" -and $module -and $category)
+      By         = $by
+   }
+}
+
+function Get-WingetMenuTargetItems {
+   param ($wingetPackages, $mode, $module, $category)
+
+   return if ($mode.IsModule) {
+      $wingetPackages.PSObject.Properties.Name
+   }
+   elseif ($mode.IsCategory) {
+      $wingetPackages.$module.PSObject.Properties.Name | Where-Object { $_ -ne "ignore" }
+   }
+   else {
+      $wingetPackages.$module.$category
+   }
+}
+
+function Get-WingetMenuTitle {
+   param ($mode, $module, $category)
+
+   return if ($mode.IsModule) { "Select a Module" }
+   elseif ($mode.IsCategory) { "Select a Category (in $module)" }
+   else { "Select a Package (in $module/$category)" }
+}
+
+function Get-WingetItemLabel {
+   param ($item, $mode)
+   if ($mode.IsPackage -and $item -match '^((9|X)[A-Z0-9]+)$') {
+      return ((Get-WingetPackageName -package $item -line) -replace "Found ", '')
+   }
+   return $item
+}
+
+function Get-WingetInstallActionString {
+   param ($item, $by, $mode, $module, $category)
+
+   return switch ($by) {
+      "Module" { "ActionWingetInstall -by 'Module' -obj `$wingetPackages.'$item'" }
+      "Category" {
+         if ($mode.IsModule) { "InteractingWithWingetData -install -by 'Category' -module '$item'" }
+         else { "ActionWingetInstall -by 'Category' -obj `$wingetPackages.'$module'.'$item'" }
+      }
+      "Package" {
+         if ($mode.IsModule -or $mode.IsCategory) {
+            $moduleArg = if ($mode.IsModule) { "'$item'" } else { "'$module' -category '$item'" }
+            "InteractingWithWingetData -install -by 'Package' -module $moduleArg"
          }
+         else { "WingetInstall -package '$item'" }
+      }
+   }
+}
+
+function Get-WingetAddActionString {
+   param ($item, $mode, $package, $module, $source)
+   if ($mode.IsModule) {
+      return "InteractingWithWingetData -add -package '$package' -module '$item' -source `$source"
+   }
+   return "ActionAddToData -package '$package' -module '$module' -category '$item' -source `$source"
+}
+
+function New-WingetMenuItems {
+   param ($options, $mode, [switch]$install, [switch]$add, $module, $category, $package, $source)
+
+   $menuOptions = foreach ($item in $options) {
+      $label = Get-WingetItemLabel -item $item -mode $mode
+      $action = if ($install) {
+         Get-WingetInstallActionString -item $item -by $mode.By -mode $mode -module $module -category $category
       }
       else {
-         if ($isModule) { "InteractingWithWingetData -add -package '$package' -module '$item' -source `$source" }
-         else { "ActionAddToData -package '$package' -module '$module' -category '$item' -source `$source" }
+         Get-WingetAddActionString -item $item -mode $mode -package $package -module $module -source $source
       }
-
       [PSCustomObject]@{ Label = $label ; Action = [scriptblock]::Create($action) }
    }
 
-   if ($add) {
-      $menuOptions = @(
-         ($menuOptions | Sort-Object -Property Label)
-         [PSCustomObject]@{
-            Label  = "New"
-            Action = [scriptblock]::Create("ActionAddToData -package `$package $( if ($isCategory) { "-module `$module" } ) -source `$source")
-         }
-      )
-   }
+   return $menuOptions
+}
 
-   Show-Menu -options $menuOptions -title (GetBoxedText -text "Select a $(if ($isModule) {"Module"} elseif ($isCategory) {"Category (in $module)"} else {"Package (in $module/$category)"})") -submenu -sorted:$add
-   return
+function Add-WingetNewOption {
+   param ($menuOptions, $mode, $package, $module, $source)
+   return @(
+      ($menuOptions | Sort-Object -Property Label)
+      [PSCustomObject]@{
+         Label  = "New"
+         Action = [scriptblock]::Create("ActionAddToData -package `$package $( if ($mode.IsCategory) { "-module `$module" } ) -source `$source")
+      }
+   )
 }
 
 function InteractingWithWingetInstalledPackages {
