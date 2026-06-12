@@ -213,7 +213,7 @@ function Get-WingetItemLabel {
 function Get-WingetInstallActionString {
    param ($item, $by, $mode, $module, $category)
 
-   return switch ($by) {
+   $result = switch ($by) {
       "Module" { "ActionWingetInstall -by 'Module' -obj `$wingetPackages.'$item'" }
       "Category" {
          if ($mode.IsModule) { "InteractingWithWingetData -install -by 'Category' -module '$item'" }
@@ -227,6 +227,7 @@ function Get-WingetInstallActionString {
          else { "WingetInstall -package '$item'" }
       }
    }
+   return $result
 }
 
 function Get-WingetAddActionString {
