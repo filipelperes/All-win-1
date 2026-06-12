@@ -1,76 +1,88 @@
-# :rocket: All-win-1 :rocket:
-#### The last tweaker tool you'll ever need. Simplify your life with :rocket: All-win-1 :rocket:
-:rocket: **All-win-1** :rocket: is a PowerShell-based tool designed to simplify your Windows experience.
+# All-win-1
 
-- [Optional Prerequisites](#optional-prerequisites)
-- [How to Get Started](#how-to-get-started)
-- [How to Use](#how-to-use)
-- [Extra](#extra)
-- [Contribute & Support](#contribute-support)
+PowerShell tool for Windows environment configuration, package management, system tweaks, and development environment setup.
 
----
+## Features
 
-## :wrench: Optional Prerequisites <a id="optional-prerequisites"></a>
+- **Package Management**: Install, export, and restore packages via Winget, Chocolatey, and Scoop
+- **Development Tools**: Install language runtimes, version managers (fnm, nvm, mise), package managers (npm, pip, pnpm), and dev tools
+- **System Tweaks**: Explorer settings, power plans, theme toggles, time sync, computer rename, and more
+- **Environment Variables**: Backup, compare, and restore environment variables per scope (User/Machine)
+- **PowerShell Themes**: Apply community themes like Dracula to the console
+- **Windows Themes**: Install Windhawk (Win 11) and SecureUxTheme
+- **Settings Menu**: Quick access to Windows settings panels
 
-##### :four_leaf_clover: Winrar: Run the command below in PowerShell to install (if you don't have it):
+## Prerequisites
+
+| Requirement | Notes |
+|---|---|
+| Windows 10 1809+ | Winget support requires build 16299+ |
+| PowerShell 3.0+ | Some features benefit from newer versions |
+| Administrator rights | Required for system-level operations |
+
+Optional tools may be installed from within the tool itself.
+
+## Quick Start
+
 ```powershell
-winget install --id RARLab.WinRAR --accept-package-agreements
+# 1. Open PowerShell as Administrator (Win+X, then A)
+
+# 2. Navigate to the project directory
+cd <path-to-all-win-1>
+
+# 3. Run
+Set-ExecutionPolicy RemoteSigned -Scope Process -Force; .\main.ps1
 ```
 
-##### :desktop_computer: Git: Run the command below in PowerShell to install (if you don't have it):
-```powershell
-winget install --id Git.Git --accept-package-agreements
+## Configuration
+
+Edit `config.ps1` to adjust backup/export file paths.  
+Edit files under `data/` to customize package lists and environment variable templates.
+
+- `data/winget.json` / `data/winget.ps1` — Winget package catalog
+- `data/chocolatey.json` / `data/chocolatey.ps1` — Chocolatey package list
+- `data/scoop.json` / `data/scoop.ps1` — Scoop package list
+- `data/packages.json` / `data/packages.ps1` — Node.js and Python global packages
+- `data/environmentvariables.json` / `data/environmentvariables.ps1` — Environment variable reference profiles
+
+## Project Structure
+
+```
+All-win-1/
+├── main.ps1             # Entry point
+├── config.ps1           # Global configuration
+├── data/                # Data files (JSON + PowerShell objects)
+│   ├── backup/          # Export/backup output directory
+│   ├── winget.*
+│   ├── chocolatey.*
+│   ├── scoop.*
+│   ├── packages.*
+│   └── environmentvariables.*
+├── modules/             # Feature modules
+│   ├── menu.ps1         # Menu display system
+│   ├── winget.ps1
+│   ├── chocolatey.ps1
+│   ├── scoop.ps1
+│   ├── 4devs.ps1
+│   ├── environmentVariables.ps1
+│   ├── pwshThemes.ps1
+│   ├── themes.ps1
+│   ├── tweaks.ps1
+│   ├── globals.ps1
+│   ├── ps-menu/         # Interactive menu engine
+│   └── utils/           # Shared utilities
+│       ├── json.ps1
+│       ├── arrays.ps1
+│       ├── recursive.ps1
+│       └── utils.ps1
+├── .gitattributes
+└── LICENSE
 ```
 
----
+## Contributing
 
-## :checkered_flag: How to Get Started <a id="how-to-get-started"></a>
-#### :inbox_tray: **1. Download or clone:**
-   * :pushpin: **Manual Download:**
-      * Click the "Code" (green) button on the GitHub repository.
-      * Select "Download ZIP".
-      * Extract the contents of the ZIP file to a folder of your choice.
-   * :pushpin: **Clone the repo:**
-      ```powershell
-      cd <PROJECT_LOCATION_FOLDER> ; git clone https://github.com/filipelperes/All-win-1.git ; cd All-win-1\
-      ```
+Contributions are welcome. Open an issue for bugs or feature requests, or submit a pull request.
 
-#### :desktop_computer: **2. Open PowerShell as Administrator:** *Press `Win + X` then `A`*
+## License
 
-#### :open_file_folder: **3. Navigate to the Project Directory:**
-   * Use the `cd` command to navigate to the folder where the `main.ps1` script is located.
-      ```powershell
-      cd <PROJECT_LOCATION_FOLDER>\All-win-1
-      ```
-      :small_blue_diamond: **Tip:** If you cloned the repository, the path will be the folder created by `git clone`.
-
-#### :rocket: **4. Run the Script:**
-   * Run the following command in PowerShell:
-      ```powershell
-      Set-ExecutionPolicy RemoteSigned -Scope Process -Force ; .\main.ps1
-      ```
-
----
-
-## :question: How to Use :question: <a id="how-to-use"></a>
-
-**Once the script main.ps1 is executed, you should see a menu-driven interface (or a series of prompts) that allows you to select different tweaking options. Follow the on-screen instructions to explore the available features.**
-
-**Most features have been tested and are working well, but if you encounter any issues, feel free to report them.**
-
-**Check the `config.ps1` file to adjust settings for import a file, or directly edit the data in the `data` directory as needed.**
-
----
-
-### :hammer_and_wrench: Extra <a id="extra"></a>
-**For Fish Shell With Starship on Windows Git Bash check out [this guide](https://gist.github.com/filipelperes/212abbfd422b4f3c77a04a26f4729c4c) or use the option in the 4devs menu.**
-
----
-
-### :loudspeaker: Contribute & Support <a id="contribute-support"></a>
-:busts_in_silhouette: **Contributions are welcome!**
-
-   * **Submit a Pull Request to improve the code.**
-   * **Report issues in the Issues section of the repository.**
-
-:email: **Need help? contact us or open an Issue on GitHub.**
+This project is licensed under the terms of the LICENSE file included in the repository.
