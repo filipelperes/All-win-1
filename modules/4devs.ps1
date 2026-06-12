@@ -36,6 +36,13 @@ function Import-GlobalNodePackages {
    Show-Menu -options $importGlobalOptions -title $null -submenu
 }
 
+<#
+.SYNOPSIS
+    Installs and configures Fish shell inside Git Bash on Windows.
+.DESCRIPTION
+    Orchestrates the full Fish-on-Git-Bash setup: dependencies, bash profile
+    configuration, MSYS2 packages, Fish binaries, and optional winget packages.
+#>
 function Install-FishShellOnGitBash {
    if (-not (Test-WingetSupport)) {
       Write-Host "$global:space`Winget is not supported on this system." -ForegroundColor Yellow
@@ -43,46 +50,112 @@ function Install-FishShellOnGitBash {
       return
    }
 
-   foreach ($id in @("Git.Git", "MSYS2.MSYS2")) { winget install --id $id --accept-package-agreements }
+   Install-GitBashDependencies
+   $gitDir, $bashPath, $bashProfile, $bashRc = Get-GitBashPaths
 
+   Initialize-BashFiles -bashProfile $bashProfile -bashRc $bashRc
+   $bashProfileContent, $bashRcContent = Read-BashFiles -bashProfile $bashProfile -bashRc $bashRc
+
+   $bashProfileContent, $bashRcContent = Set-BashProfileContent -bashProfileContent $bashProfileContent -bashRcContent $bashRcContent
+
+   Write-Utf8File -Path $bashProfile -Content $bashProfileContent
+   Write-Utf8File -Path $bashRc -Content $bashRcContent
+
+   Invoke-GitBashCommand -bashPath $bashPath -command "source ~/.bash_profile; source ~/.bashrc"
+   Install-Msys2BasePackages -bashPath $bashPath
+   Install-Msys2FishPackage -gitDir $gitDir -bashPath $bashPath
+
+   $bashRcContent = Enable-FishShellInBashRc -bashRc $bashRc
+   Write-Utf8File -Path $bashRc -Content $bashRcContent
+
+   Install-OptionalWingetPackages
+}
+
+# ─── helpers ─────────────────────────────────────────────────────────────────
+
+function Install-GitBashDependencies {
+   foreach ($id in @("Git.Git", "MSYS2.MSYS2")) {
+      winget install --id $id --accept-package-agreements
+   }
+}
+
+function Get-GitBashPaths {
    $gitDir = "$env:ProgramFiles\Git"
    $bashPath = "$gitDir\bin\bash.exe"
    $bashProfile = "$HOME\.bash_profile"
    $bashRc = "$HOME\.bashrc"
+   return $gitDir, $bashPath, $bashProfile, $bashRc
+}
 
+function Initialize-BashFiles {
+   param ($bashProfile, $bashRc)
    if (-not (Test-Path $bashProfile)) { New-Item -Path $bashProfile -ItemType File -Force | Out-Null }
-   if (-not (Test-Path $bashRc)) { New-Item -Path $bashRc -ItemType File -Force | Out-Null }
+   if (-not (Test-Path $bashRc))      { New-Item -Path $bashRc -ItemType File -Force | Out-Null }
+}
 
-   $bashProfileContent = Get-Content -Path $bashProfile
-   $bashRcContent = Get-Content -Path $bashRc
+function Read-BashFiles {
+   param ($bashProfile, $bashRc)
+   return (Get-Content -Path $bashProfile), (Get-Content -Path $bashRc)
+}
 
-   if ($bashProfileContent -notmatch "export PATH" -and $bashRcContent -notmatch "export PATH") { $bashProfileContent += "`nexport PATH=`"/c/msys64/usr/bin:`$PATH`"" }
+function Write-Utf8File {
+   param ([string]$Path, [string]$Content)
+   [System.IO.File]::WriteAllText($Path, $Content, [System.Text.UTF8Encoding]::new($false))
+   if ((Get-Content -Path $Path -Raw) -match "^\xEF\xBB\xBF") { RemoveByteOrderMark -filePath $Path }
+}
+
+function Set-BashProfileContent {
+   param ([string[]]$bashProfileContent, [string[]]$bashRcContent)
+
+   # Phase 1: ensure MSYS2 binaries are on PATH
+   if ($bashProfileContent -notmatch "export PATH" -and $bashRcContent -notmatch "export PATH") {
+      $bashProfileContent += "`nexport PATH=`"/c/msys64/usr/bin:`$PATH`""
+   }
    else {
-      if (
-         ($bashProfileContent -match "export PATH" -and $bashRcContent -match "export PATH" -and $bashProfileContent -notmatch "/c/msys64/usr/bin" -and $bashRcContent -notmatch "/c/msys64/usr/bin") -or
-         ($bashRcContent -notmatch "export PATH" -and $bashProfileContent -match "export PATH" -and $bashProfileContent -notmatch "/c/msys64/usr/bin")
-      ) { $bashProfileContent = $bashProfileContent -replace '(export PATH\s*=\s*")(.*?)(:?(\$PATH):?)?(.*?)(")', '$1/c/msys64/usr/bin:${2:+$2}${5:+$5}${4:+:$4}$6' }
-      if ($bashProfileContent -notmatch "export PATH" -and $bashRcContent -match "export PATH" -and $bashRcContent -notmatch "/c/msys64/usr/bin") {
-         $bashRcContent = $bashRcContent -replace '(export PATH\s*=\s*")(.*?)(:?(\$PATH):?)?(.*?)(")', '$1/c/msys64/usr/bin:${2:+$2}${5:+$5}${4:+:$4}$6'
+      $hasPathInProfile = $bashProfileContent -match "export PATH"
+      $hasPathInRc      = $bashRcContent -match "export PATH"
+      $msysInProfile    = $bashProfileContent -match "/c/msys64/usr/bin"
+      $msysInRc         = $bashRcContent -match "/c/msys64/usr/bin"
+
+      $pathReplacePattern = '(export PATH\s*=\s*")(.*?)(:?(\$PATH):?)?(.*?)(")'
+      $msysPathInsert = '$1/c/msys64/usr/bin:${2:+$2}${5:+$5}${4:+:$4}$6'
+
+      # Insert MSYS2 path into whichever file has the export but not the path yet
+      if ($hasPathInProfile -and -not $msysInProfile) {
+         $bashProfileContent = $bashProfileContent -replace $pathReplacePattern, $msysPathInsert
+      }
+      if ($hasPathInRc -and -not $msysInRc) {
+         $bashRcContent = $bashRcContent -replace $pathReplacePattern, $msysPathInsert
+      }
+      # If neither has it and profile doesn't have export, add to rc (fallback handled above)
+      if (-not $hasPathInProfile -and -not $msysInProfile -and $hasPathInRc -and -not $msysInRc) {
+         $bashRcContent = $bashRcContent -replace $pathReplacePattern, $msysPathInsert
       }
    }
 
+   # Phase 2: source bashrc from bash_profile
    if ($bashProfileContent -notmatch "source ~/.bashrc") {
       $bashProfileContent += "`n$(ArrayToString -array @( "if [ -f ~/.bashrc ] ; then", "   source ~/.bashrc", "fi") -separator "`n")"
    }
 
+   # Phase 3: add useful alias
    if ($bashRcContent -notmatch "alias la") { $bashRcContent += "`nalias la='ls -la'" }
 
-   [System.IO.File]::WriteAllText($bashProfile, $bashProfileContent, [System.Text.UTF8Encoding]::new($false))
-   if ((Get-Content -Path $bashProfile -Raw) -match "^\xEF\xBB\xBF") { RemoveByteOrderMark -filePath $bashProfile }
+   return $bashProfileContent, $bashRcContent
+}
 
-   [System.IO.File]::WriteAllText($bashRc, $bashRcContent, [System.Text.UTF8Encoding]::new($false))
-   if ((Get-Content -Path $bashRc -Raw) -match "^\xEF\xBB\xBF") { RemoveByteOrderMark -filePath $bashRc }
+function Invoke-GitBashCommand {
+   param ([string]$bashPath, [string]$command)
+   Start-Process -FilePath $bashPath -ArgumentList "-l", "-c", $command -Verb RunAs -Wait -WindowStyle Hidden
+}
 
-   Start-Process -FilePath $bashPath -ArgumentList "-l", "-c", "`'source ~/.bash_profile; source ~/.bashrc`'" -Verb RunAs -Wait -WindowStyle Hidden
-   Start-Process -FilePath $bashPath -ArgumentList "-l", "-c", "`'yes | pacman -S zstd ; yes | pacman -Syu`'" -Verb RunAs -Wait -WindowStyle Hidden
-   #yes | pacman -S mingw-w64-ucrt-x86_64-gcc ; # open "MSYS2 UCRT64" from the Start menu and install the C and C++ compiler:
-   #yes | pacman -S mingw-w64-clang-x86_64-clang ; # open "MSYS2 CLANG64" from the Start menu and install the C and C++ compiler:
+function Install-Msys2BasePackages {
+   param ([string]$bashPath)
+   Invoke-GitBashCommand -bashPath $bashPath -command "yes | pacman -S zstd ; yes | pacman -Syu"
+}
+
+function Install-Msys2FishPackage {
+   param ([string]$gitDir, [string]$bashPath)
 
    $urls = @(
       "https://mirror.msys2.org/msys/x86_64/fish-3.7.1-3-x86_64.pkg.tar.zst"
@@ -92,18 +165,20 @@ function Install-FishShellOnGitBash {
    foreach ($url in $urls) {
       $fileName = $url.Split("/")[-1].Trim()
       Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile "$gitDir\$fileName"
-      Start-Process -FilePath $bashPath -ArgumentList "-l", "-c", "`'cd / ; tar --zstd -xf $fileName`'" -Verb RunAs -Wait -WindowStyle Hidden
+      Invoke-GitBashCommand -bashPath $bashPath -command "cd / ; tar --zstd -xf $fileName"
    }
+}
 
+function Enable-FishShellInBashRc {
+   param ([string]$bashRc)
    $bashRcContent = Get-Content -Path $bashRc
-
    if ($bashRcContent -notmatch "exec fish") {
       $bashRcContent += "`n$(ArrayToString -array @("# Launch Fish", "if [ -t 1 ]; then", "exec fish", "fi") -separator "`n")"
    }
+   return $bashRcContent
+}
 
-   [System.IO.File]::WriteAllText($bashRc, $bashRcContent, [System.Text.UTF8Encoding]::new($false))
-   if ((Get-Content -Path $bashRc -Raw) -match "^\xEF\xBB\xBF") { RemoveByteOrderMark -filePath $bashRc }
-
+function Install-OptionalWingetPackages {
    $packages = @{
       "Starship.Starship"         = "Do you want Starship?"
       "Microsoft.WindowsTerminal" = "Do you want Windows Terminal?"
