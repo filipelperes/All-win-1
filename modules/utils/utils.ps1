@@ -6,3 +6,8 @@ function RemoveByteOrderMark {
    param ( [string]$filePath )
    [System.IO.File]::WriteAllText($filePath, ((Get-Content -Path $filePath -Raw) -replace "^\xEF\xBB\xBF", ""), [System.Text.UTF8Encoding]::new($false))
 }
+
+function Get-AsciiCode {
+   param ( [ConsoleKey]$key )
+   return [int][char][ConsoleKey]::$key
+}
