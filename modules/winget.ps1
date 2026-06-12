@@ -198,7 +198,7 @@ function InteractingWithWingetInstalledPackages {
 
    $packages = & ([scriptblock]::Create("winget list $( if ($update) { "--upgrade-available" } else { "| Where-Object { `$_ -notmatch '(MSIX|ARP)\\' }" } )"))
 
-   $i = index -array $packages -value "^Name\s+Id\s+Version(?:\s+Available)?\s+Source$"
+   $i = Get-Index -array $packages -value "^Name\s+Id\s+Version(?:\s+Available)?\s+Source$"
    $separatorLength = $packages[($i + 1)].Length
    $title = @("  $($packages[$i])", "  $( "$([char]0x2501)" * $separatorLength )")
    $options = $packages | Select-Object -Skip ($i + 2)
@@ -352,7 +352,7 @@ function SearchWingetPackages {
    $titlePattern = "^Name\s+Id\s+Version(?:\s+Match)?(?:\s+Source)?$"
    if (-not ($search | Select-String -Pattern $titlePattern -Quiet)) { $search = & $action }
 
-   $i = index -array $search -value $titlePattern
+   $i = Get-Index -array $search -value $titlePattern
    $indent = " " * 2
    $separatorLength = $search[($i + 1)].Length
    $title = @("$indent$($search[$i])", "$indent$("$([char]0x2501)" * $separatorLength)")

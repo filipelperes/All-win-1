@@ -16,7 +16,7 @@ function StringToArray {
    return $string -split $separator
 }
 
-function index {
+function Get-Index {
    param ($array, $value)
    for ($i = 0; $i -lt $array.Count; $i++) {
       if ($array[$i] -match $value) { return $i }
