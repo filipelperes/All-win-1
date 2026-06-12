@@ -9,7 +9,7 @@ function ToggleTheme {
 
 function GetUTCDateTime {
     try {
-        $ip = (Invoke-WebRequest -Uri "https://ifconfig.me/ip").Content.Trim()
+        $ip = (Invoke-WebRequest -UseBasicParsing -Uri "https://ifconfig.me/ip").Content.Trim()
         $response = Invoke-RestMethod -Uri "http://worldtimeapi.org/api/ip/$ip"
         return [datetime]$response.utc_datetime
     }

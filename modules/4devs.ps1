@@ -91,7 +91,7 @@ function Install-FishShellOnGitBash {
 
    foreach ($url in $urls) {
       $fileName = $url.Split("/")[-1].Trim()
-      Invoke-WebRequest -Uri $url -OutFile "$gitDir\$fileName"
+      Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile "$gitDir\$fileName"
       Start-Process -FilePath $bashPath -ArgumentList "-l", "-c", "`'cd / ; tar --zstd -xf $fileName`'" -Verb RunAs -Wait -WindowStyle Hidden
    }
 
@@ -155,11 +155,11 @@ $nerdFontsMenu = [PSCustomObject]@{
    Description = "Nerd Fonts"
    Label       = "Nerd Fonts"
    Submenu     = @(
-      [PSCustomObject]@{ Label = "Fira Code" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "fira-code", "fira-mono" } }
-      [PSCustomObject]@{ Label = "Geist" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "geist-mono" } }
-      [PSCustomObject]@{ Label = "Iosevka" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "iosevka", "iosevka-term", "iosevka-term-slab" } }
-      [PSCustomObject]@{ Label = "JetBrains" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "jetbrains-mono" } }
-      [PSCustomObject]@{ Label = "All" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "fira-code", "fira-mono", "geist-mono", "iosevka", "iosevka-term", "iosevka-term-slab", "jetbrains-mono" } }
+      [PSCustomObject]@{ Label = "Fira Code" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "fira-code", "fira-mono" } }
+      [PSCustomObject]@{ Label = "Geist" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "geist-mono" } }
+      [PSCustomObject]@{ Label = "Iosevka" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "iosevka", "iosevka-term", "iosevka-term-slab" } }
+      [PSCustomObject]@{ Label = "JetBrains" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "jetbrains-mono" } }
+      [PSCustomObject]@{ Label = "All" ; Action = { & ([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing "https://to.loredo.me/Install-NerdFont.ps1"))) -Confirm:$false -Name "fira-code", "fira-mono", "geist-mono", "iosevka", "iosevka-term", "iosevka-term-slab", "jetbrains-mono" } }
    )
 }
 

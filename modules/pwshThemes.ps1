@@ -6,7 +6,7 @@ function ColorToolManager {
    $colorToolZip = "$downloads\ColorTool.zip"
    $colorToolDir = "$downloads\ColorTool"
 
-   Invoke-WebRequest -Uri $colorToolUrl -OutFile $colorToolZip
+   Invoke-WebRequest -UseBasicParsing -Uri $colorToolUrl -OutFile $colorToolZip
 
    if (-not (Test-Path $colorToolDir)) { New-Item -Path $colorToolDir -ItemType Directory | Out-Null }
 
@@ -78,7 +78,7 @@ function Set-ConsoleTheme {
 
          $pwshCfgUrl = "https://raw.githubusercontent.com/dracula/powershell/refs/heads/master/theme/dracula-prompt-configuration.ps1"
          $pwshCfgName = $pwshCfgUrl.Split("/")[-1].Trim()
-         Invoke-WebRequest -Uri $pwshCfgUrl -OutFile "$HOME\$pwshCfgName"
+          Invoke-WebRequest -UseBasicParsing -Uri $pwshCfgUrl -OutFile "$HOME\$pwshCfgName"
          $profileContent = Get-Content -Path $PROFILE -ErrorAction SilentlyContinue
          if (-not $profileContent -or $profileContent -notmatch ". `$HOME\$pwshCfgName") { Add-Content -Path $PROFILE -Value ". `$HOME\$pwshCfgName" }
 
