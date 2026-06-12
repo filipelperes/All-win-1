@@ -235,7 +235,7 @@ $tweaksMenu = [PSCustomObject]@{
         [PSCustomObject]@{ Label = "Open Startup Manager" ; Action = { Open-StartupManager } }
         [PSCustomObject]@{ Label = "Open Task Manager" ; Action = { taskmgr -Verb RunAs } }
         [PSCustomObject]@{ Label = "Open User Account Control (UAC) (Advanced Users)" ; Action = { UserAccountControlSettings } }
-        if ($global:OSVersion -eq 11) { [PSCustomObject]@{ Label = "Reinstall Powershell" ; Action = { Get-WindowsFeature -Name PowerShell | Install-WindowsFeature } } }
+        if ($global:OSVersion -eq 11) { [PSCustomObject]@{ Label = "Reinstall Powershell" ; Action = { if (Get-Command -Name Get-WindowsFeature -ErrorAction SilentlyContinue) { Get-WindowsFeature -Name PowerShell | Install-WindowsFeature } else { Write-Warning "Get-WindowsFeature cmdlet not found. This feature requires the ServerManager module (available on Windows Server or with RSAT tools)." } } } }
         [PSCustomObject]@{ Label = "Rename Computer" ; Action = { RenamePC } }
         [PSCustomObject]@{ Label = "Toggle Explorer File Extensions" ; Action = { ExplorerTweaks -UpdateFileExtensions } }
         [PSCustomObject]@{ Label = "Toggle Explorer Hidden Items" ; Action = { ExplorerTweaks -UpdateHiddenItems } }

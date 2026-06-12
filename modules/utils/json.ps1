@@ -2,10 +2,11 @@ $script:dataCache = @{}
 
 function GetJsonObject {
    param (
-      [string]$fileName
+      [string]$fileName,
+      [switch]$force
    )
 
-   if ($script:dataCache.ContainsKey($fileName)) {
+   if (-not $force -and $script:dataCache.ContainsKey($fileName)) {
       return $script:dataCache[$fileName]
    }
 
@@ -21,10 +22,6 @@ function GetJsonObject {
 
    $script:dataCache[$fileName] = $result
    return $result
-}
-
-function Clear-DataCache {
-   $script:dataCache.Clear()
 }
 
 function ExportJson {
