@@ -3,8 +3,6 @@
 . "$PSScriptRoot\utils\recursive.ps1"
 
 $envVarsFile = "$PSScriptRoot\..\data\environmentvariables.json"
-$volatileEnvpath = "HKCU:\Volatile Environment"
-$envPath = @( "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment", "HKCU:\Environment")
 $props = @(
     "NUMBER_OF_PROCESSORS"
     "OS"
