@@ -1,4 +1,4 @@
-function PreviewForegroundColors {
+function Show-ForegroundColorPreview {
    return ([enum]::GetValues([System.ConsoleColor])) | ForEach-Object { Write-Host $_ -ForegroundColor $_ }
 }
 

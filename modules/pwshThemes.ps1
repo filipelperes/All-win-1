@@ -1,4 +1,4 @@
-function ColorToolManager {
+function Invoke-ColorToolInstaller {
    param (
       [string]$colorToolUrl
    )
@@ -74,7 +74,7 @@ function Set-ConsoleTheme {
          Install-Module -Name PowerShellGet -Scope AllUsers
          Install-Module -Name posh-git -Scope AllUsers
 
-         ColorToolManager -colorToolUrl "https://raw.githubusercontent.com/waf/dracula-cmd/master/dist/ColorTool.zip"
+         Invoke-ColorToolInstaller -colorToolUrl "https://raw.githubusercontent.com/waf/dracula-cmd/master/dist/ColorTool.zip"
 
          $pwshCfgUrl = "https://raw.githubusercontent.com/dracula/powershell/refs/heads/master/theme/dracula-prompt-configuration.ps1"
          $pwshCfgName = $pwshCfgUrl.Split("/")[-1].Trim()

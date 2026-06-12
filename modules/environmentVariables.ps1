@@ -16,10 +16,9 @@ $props = @(
     "OneDriveConsumer"
 )
 
-function Test-EnvVarsFileExists { return (Test-Path -Path $envVarsFile) }
 function GetEnvironmentVariables { return GetJsonObject -fileName "environmentvariables" }
 
-function EnvironmentVariableTarget {
+function Get-EnvironmentVariableTarget {
     param ( [string]$scope )
 
     switch ($scope) {
@@ -32,28 +31,7 @@ function GetDefaultEnvVars {
     return [PSCustomObject]@{
         Machine = [System.Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::Machine)
         User    = [System.Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::User)
-        #Process = [System.Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::Process)
     }
-}
-
-function GetRegEnvVars {
-    $regEnvVars = [PSCustomObject]@{
-        Machine = @{}
-        User    = @{}
-    }
-
-    foreach ($item in $regEnvVars) {
-        $prop = if ($item -like "HKLM*") { "Machine" } else { "User" }
-        foreach ($i in ((Get-ItemProperty -Path $item).PSObject.Properties)) { $regEnvVars.$prop[$i.Name] = $i.Value }
-    }
-
-    return CompareBy $regEnvVars (GetDefaultEnvVars)
-}
-
-function GetVolatileEnvVars {
-    $volatile = @{}
-    foreach ($i in ((Get-ItemProperty -Path $volatileEnvpath).PSObject.Properties)) { $volatile[$i.Name] = $i.Value }
-    return $volatile
 }
 
 function ModifyEnvironmentVariable {
@@ -65,7 +43,7 @@ function ModifyEnvironmentVariable {
     )
 
     $value = if ($remove) { $null } else { $value }
-    [System.Environment]::SetEnvironmentVariable($name, $value, (EnvironmentVariableTarget -scope $scope))
+    [System.Environment]::SetEnvironmentVariable($name, $value, (Get-EnvironmentVariableTarget -scope $scope))
 }
 
 function GetEnvironmentVariable {
@@ -74,24 +52,8 @@ function GetEnvironmentVariable {
         [ValidateSet("User", "Machine")][string]$scope = "User"
     )
 
-    $value = [System.Environment]::GetEnvironmentVariable($name, (EnvironmentVariableTarget -scope $scope))
+    $value = [System.Environment]::GetEnvironmentVariable($name, (Get-EnvironmentVariableTarget -scope $scope))
     if ($null -ne $value) { return $value } else { return $null }
-}
-
-function RemoveRefValues {
-    param ( $obj )
-
-    Invoke-ObjectForEach -obj $obj -processItem {
-        param ( $item, $k, $v )
-        foreach ($i in (Get-IterableObject -obj $v)) {
-            $ipair = GetItemKeyValuePair -item $i
-            $ik = $ipair.Key
-            $iv = $ipair.Value
-            $obj.$k.$ik = $iv -replace ([regex]::Escape($data.ref.$k.$ik)), ''
-        }
-    }
-
-    return $obj
 }
 
 function ExportEnvironmentVariables {
@@ -121,7 +83,7 @@ function ImportEnvironmentVariables {
         if (-not ((Get-IterableObject $v).Count -gt 0)) { continue }
 
         foreach ($i in (Get-IterableObject -obj $v)) {
-            $ipair = GetItemKeyValuePair -item $i
+            $ipair = Get-ItemKeyValuePair -item $i
             $ik = $ipair.Key
             $iv = $ipair.Value
             if ($ik -eq "Path") {

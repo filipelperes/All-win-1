@@ -40,7 +40,7 @@ function Get-Keys {
     )
 }
 
-function GetItemKeyValuePair {
+function Get-ItemKeyValuePair {
     param ($item)
 
     return $(
@@ -52,7 +52,7 @@ function GetItemKeyValuePair {
     )
 }
 
-function GetItemKey {
+function Get-ItemKey {
     param ($item)
 
     return $(
@@ -85,7 +85,7 @@ function Get-Values {
     )
 }
 
-function GetItemValue {
+function Get-ItemValue {
     param ($item)
 
     return $(
@@ -94,7 +94,7 @@ function GetItemValue {
     )
 }
 
-function CreateResult {
+function New-ResultObject {
     param ( $obj )
 
     return $(
@@ -126,7 +126,7 @@ function Invoke-ObjectForEach {
 
     foreach ($item in $aux) {
         if (-not $item -or $item.GetType().Name -eq "PSProperty") { continue }  # LIÇÃO = PSProperty é as propriedades nativas como length, add, remove, ...
-        $ipair = GetItemKeyValuePair $item
+        $ipair = Get-ItemKeyValuePair $item
         $k = $ipair.Key
         $v = $ipair.Value
         & $processItem $item $k $v
@@ -162,7 +162,7 @@ function CompareByRecursive {
 
     if ($null -eq $refKeys -and $by -eq "Key") { return }
 
-    $result = CreateResult $inputObj
+    $result = New-ResultObject $inputObj
 
     if ($null -eq $refKeys -and $by -in @("Value", "Default") -and ($inputObj -is [array] -or $inputObj -is [object[]])) {
         $result += $inputObj | Where-Object { if ($equals) { $_ -in $ref } else { $_ -notin $ref } }
@@ -281,7 +281,7 @@ function RemoveByRecursive {
 
     if ($null -eq $obj -or $null -eq $props -or $props.Count -eq 0) { return }
 
-    $result = CreateResult $obj
+    $result = New-ResultObject $obj
 
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
@@ -405,7 +405,7 @@ function ReplaceAllRecursive {
 
     if ($null -eq $obj -or $null -eq $from) { return }
 
-    $result = CreateResult $obj
+    $result = New-ResultObject $obj
 
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
@@ -428,7 +428,7 @@ function HashtableToPSCustomObjectRecursive {
     param ( $obj )
 
     $result = if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { [PSCustomObject]::new() }
-    else { CreateResult -obj $obj }
+    else { New-ResultObject -obj $obj }
 
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
@@ -455,7 +455,7 @@ function SortAllRecursive {
 
     if ($null -eq $obj) { return }
 
-    $result = CreateResult -obj $obj
+    $result = New-ResultObject -obj $obj
 
     Invoke-ObjectForEach -obj $obj -processItem {
         param ( $item, $k, $v )
@@ -463,35 +463,35 @@ function SortAllRecursive {
         $sub = if (Test-IsIterable -obj $v) { SortAllRecursive -obj $v -order $order -depth ($depth + 1) } else { $null }
 
         $v = if ($null -eq $sub) { $v }
-        elseif ($sub -is [array] -or $sub -is [object[]]) { SortArrayOrObjectArray -array $sub -order $order }
-        elseif ($sub -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { SortHashtable -hashtable $sub -order $order }
-        elseif ($sub -is [PSCustomObject]) { SortPSCustomObject -obj $sub -order $order }
+        elseif ($sub -is [array] -or $sub -is [object[]]) { Sort-ArrayOrObjectArray -array $sub -order $order }
+        elseif ($sub -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { Sort-Hashtable -hashtable $sub -order $order }
+        elseif ($sub -is [PSCustomObject]) { Sort-PSCustomObject -obj $sub -order $order }
 
         Add-ToResult -result ([ref]$result) -key $k -value $v -obj $obj
     }
 
     if ($depth -eq 0) {
-        if ($obj -is [array] -or $obj -is [object[]]) { return SortArrayOrObjectArray -array $result -order $order }
-        if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { return SortHashtable -hashtable $result -order $order }
-        if ($obj -is [PSCustomObject]) { return SortPSCustomObject -obj $result -order $order }
+        if ($obj -is [array] -or $obj -is [object[]]) { return Sort-ArrayOrObjectArray -array $result -order $order }
+        if ($obj -is [hashtable] -or $obj -is [System.Collections.Specialized.OrderedDictionary]) { return Sort-Hashtable -hashtable $result -order $order }
+        if ($obj -is [PSCustomObject]) { return Sort-PSCustomObject -obj $result -order $order }
     }
 
     return $result
 }
 
-function SortArrayOrObjectArray {
+function Sort-ArrayOrObjectArray {
     param ( $array, $order )
     return $array | Sort-Object -Descending:($order -eq "Desc")
 }
 
-function SortHashtable {
+function Sort-Hashtable {
     param ( $hashtable, $order )
     $sortedHashtable = [ordered]@{}
     foreach ($i in ($hashtable.Keys | Sort-Object -Descending:($order -eq "Desc"))) { $sortedHashtable[$i] = $hashtable[$i] }
     return $sortedHashtable
 }
 
-function SortPSCustomObject {
+function Sort-PSCustomObject {
     param ( $obj, $order )
     $sortedPSCustomObject = [PSCustomObject]::new()
     foreach ($i in ($obj.PSObject.Properties | Sort-Object Name -Descending:($order -eq "Desc"))) {
