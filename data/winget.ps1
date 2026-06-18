@@ -212,7 +212,7 @@ $data_winget = [PSCustomObject]@{
                 "Proton.ProtonMail"
                 "Proton.ProtonMailBridge"
             )
-            Entertainments = @(
+            Entertainment = @(
                 "9NCBCSZSJRSB"
                 "Spotify.Spotify"
                 "Stremio.Stremio"
@@ -225,7 +225,7 @@ $data_winget = [PSCustomObject]@{
                 "RiotGames.LeagueOfLegends.BR"
                 "Valve.Steam"
             )
-            IAs = @(
+            AI = @(
                 "9PF94J2D9F6X"
             )
             "Image Editor" = @(
@@ -284,7 +284,7 @@ $data_winget = [PSCustomObject]@{
                 "XPDBVSS44R0L9H"
                 "XPFFZHVGQWWLHB"
             )
-            Offices = @(
+            Office = @(
                 "9NSGM705MQWC"
                 "9WZDNCRD29V9"
                 "Apache.OpenOffice"
@@ -303,7 +303,7 @@ $data_winget = [PSCustomObject]@{
                 "Bitwarden.Bitwarden"
                 "Bitwarden.CLI"
             )
-            Socials = @(
+            Social = @(
                 "9MXBP1FB84CQ"
                 "9NBDXK71NK08"
                 "9NBLGGH5L9XT"
@@ -331,7 +331,7 @@ $data_winget = [PSCustomObject]@{
                 "Stardock.Start10"
                 "Stardock.Start11"
             )
-            Todos = @(
+            Todo = @(
                 "9NBLGGH4XXVW"
                 "9NBLGGH5R558"
                 "Appest.TickTick"

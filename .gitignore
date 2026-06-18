@@ -1,4 +1,5 @@
 /data/backup/bkp.ps1
-/data/estrutura_projeto.txt
+# Generated project structure tree output
+/data/project_structure.txt
 /data/backup/environmentvariables.json
 /tests.ps1

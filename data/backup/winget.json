@@ -158,7 +158,7 @@
             "Proton.ProtonMail",
             "Proton.ProtonMailBridge"
          ],
-         "Entertainments": [
+         "Entertainment": [
             "Spotify.Spotify",
             "Stremio.Stremio"
          ],
@@ -215,7 +215,7 @@
             "Notion.Notion",
             "XPFFZHVGQWWLHB"
          ],
-         "Offices": [
+         "Office": [
             "9NSGM705MQWC",
             "9WZDNCRD29V9",
             "Apache.OpenOffice",
@@ -238,7 +238,7 @@
             "Bitwarden.Bitwarden",
             "Bitwarden.CLI"
          ],
-         "Socials": [
+         "Social": [
             "9MXBP1FB84CQ",
             "9NBLGGH5L9XT",
             "9NH2GPH4JZS4",
@@ -254,7 +254,7 @@
             "XPFM5P5KDWF0JP",
             "Zoom.Zoom"
          ],
-         "Todos": [
+         "Todo": [
             "9NBLGGH4XXVW",
             "9NBLGGH5R558",
             "Doist.Todoist"

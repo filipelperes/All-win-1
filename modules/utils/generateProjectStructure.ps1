@@ -1,10 +1,10 @@
-# Caminho do diretório do projeto
+# Project directory path
 $projectPath = "$PSScriptRoot\..\..\"
 
-# Caminho para salvar a estrutura em um arquivo de texto
-$outputFilePath = "$projectPath\data\estrutura_projeto.txt"
+# Path to save the structure to a text file
+$outputFilePath = "$projectPath\data\project_structure.txt"
 
-# Função para obter a estrutura do diretório
+# Function to get the directory structure
 function Get-DirectoryStructure {
    param (
       [string]$path,
@@ -20,10 +20,10 @@ function Get-DirectoryStructure {
    }
 }
 
-# Inicializa o arquivo de saída
-"Windows Sync\" | Out-File -FilePath $outputFilePath -Encoding utf8
+# Initialize the output file
+"All-win-1\" | Out-File -FilePath $outputFilePath -Encoding utf8
 
-# Obtém a estrutura do diretório
+# Get the directory structure
 Get-DirectoryStructure -path $projectPath
 
-Write-Host "A estrutura do projeto foi extraída e salva em $outputFilePath" -ForegroundColor Green
+Write-Host "Project structure extracted and saved to $outputFilePath" -ForegroundColor Green

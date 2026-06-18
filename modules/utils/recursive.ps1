@@ -125,7 +125,7 @@ function Invoke-ObjectForEach {
     if (-not $aux) { return }
 
     foreach ($item in $aux) {
-        if (-not $item -or $item.GetType().Name -eq "PSProperty") { continue }  # LIÇÃO = PSProperty é as propriedades nativas como length, add, remove, ...
+        if (-not $item -or $item.GetType().Name -eq "PSProperty") { continue }  # NOTE: PSProperty stands for native properties like length, add, remove, ...
         $ipair = Get-ItemKeyValuePair $item
         $k = $ipair.Key
         $v = $ipair.Value
