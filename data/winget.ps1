@@ -28,6 +28,7 @@ $data_winget = [PSCustomObject]@{
                 "Notepad++.Notepad++"
                 "Piriform.CCleaner"
                 "RARLab.WinRAR"
+                "ShareX.ShareX"
                 "Skillbrains.Lightshot"
                 "XPDP273C0XHQH2"
             )
@@ -45,6 +46,7 @@ $data_winget = [PSCustomObject]@{
                 "Codeium.Windsurf"
                 "EclipseFoundation.TheiaIDE"
                 "equalsraf.neovim-qt"
+                "Google.AntigravityIDE"
                 "JetBrains.Toolbox"
                 "lukehaas.RunJS"
                 "Microsoft.VisualStudio.2022.Community"
@@ -53,9 +55,12 @@ $data_winget = [PSCustomObject]@{
                 "Neovide.Neovide"
                 "Neovim.Neovim"
                 "Replit.Replit"
+                "SST.OpenCodeDesktop"
                 "SublimeHQ.SublimeText.4"
                 "VSCodium.VSCodium"
                 "XPFPPN5PLH3BFV"
+                "ZedIndustries.Zed"
+                "zyedidia.micro"
             )
             Databases = @(
                 "beekeeper-studio.beekeeper-studio"
@@ -71,6 +76,7 @@ $data_winget = [PSCustomObject]@{
             Git = @(
                 "Axosoft.GitKraken"
                 "Git.Git"
+                "GitHub.cli"
                 "GitHub.GitHubDesktop"
                 "Microsoft.Git"
                 "SublimeHQ.SublimeMerge"
@@ -97,8 +103,10 @@ $data_winget = [PSCustomObject]@{
                 "Warp.Warp"
             )
             Tools = @(
+                "Anthropic.ClaudeCode"
                 "astral-sh.ruff"
                 "astral-sh.uv"
+                "Canonical.Ubuntu"
                 "Cygwin.Cygwin"
                 "DEVCOM.Lua"
                 "DEVCOM.LuaJIT"
@@ -107,6 +115,7 @@ $data_winget = [PSCustomObject]@{
                 "Erlang.ErlangOTP"
                 "Figma.Figma"
                 "GoLang.Go"
+                "Google.Antigravity"
                 "hoppscotch.Hoppscotch"
                 "HTTPie.HTTPie"
                 "Insomnia.Insomnia"
@@ -115,7 +124,9 @@ $data_winget = [PSCustomObject]@{
                 "LuaLS.lua-language-server"
                 "Microsoft.OpenJDK.17"
                 "Microsoft.VisualStudio.2022.BuildTools"
+                "Microsoft.WSL"
                 "MSYS2.MSYS2"
+                "ojdkbuild.openjdk.17.jdk"
                 "OpenJS.NodeJS.LTS"
                 "Oracle.JDK.21"
                 "PortSwigger.BurpSuite.Community"
@@ -126,6 +137,7 @@ $data_winget = [PSCustomObject]@{
                 "Rustlang.Rust.MSVC"
                 "Rustlang.Rustup"
                 "Safing.Portmaster"
+                "SST.opencode"
                 "Starship.Starship"
             )
             "Version Manager" = @(
@@ -165,6 +177,7 @@ $data_winget = [PSCustomObject]@{
                 "eloston.ungoogled-chromium"
                 "Ghostery.GhosteryDawn"
                 "Google.Chrome"
+                "Google.Chrome.EXE"
                 "LibreWolf.LibreWolf"
                 "Maxthon.Maxthon"
                 "Microsoft.Edge"
@@ -181,6 +194,7 @@ $data_winget = [PSCustomObject]@{
                 "TorProject.TorBrowser"
                 "Vivaldi.Vivaldi"
                 "XP8CF6S8G2D5T6"
+                "XP99GVQDX7JPR4"
                 "XPDBZ4MPRKNN30"
                 "XPFCFKCNNTXGQD"
                 "XPFMDW72VHTTX9"
@@ -220,13 +234,19 @@ $data_winget = [PSCustomObject]@{
             Finance = @(
                 "BinanceTech.Binance"
                 "Electrum.Electrum"
+                "TradingView.TradingViewDesktop"
             )
             Games = @(
+                "BlueStack.BlueStacks"
                 "RiotGames.LeagueOfLegends.BR"
                 "Valve.Steam"
+                "XP99VRNQHM80FC"
             )
             AI = @(
                 "9PF94J2D9F6X"
+                "Alibaba.Qwen"
+                "Anthropic.Claude"
+                "XP9CXNGPPJ97XX"
             )
             "Image Editor" = @(
                 "9NBLGGH4TWWG"
@@ -251,6 +271,7 @@ $data_winget = [PSCustomObject]@{
                 "ImageMagick.ImageMagick"
                 "Inkscape.Inkscape"
                 "KDE.Krita"
+                "XP8K17RNMM8MTN"
                 "XP9K1VV4DPL5XT"
                 "XPDLPKWG9SW2WD"
             )
@@ -287,6 +308,7 @@ $data_winget = [PSCustomObject]@{
             Office = @(
                 "9NSGM705MQWC"
                 "9WZDNCRD29V9"
+                "Adobe.Acrobat.Reader.64-bit"
                 "Apache.OpenOffice"
                 "Kingsoft.WPSOffice"
                 "ONLYOFFICE.DesktopEditors"
@@ -318,6 +340,7 @@ $data_winget = [PSCustomObject]@{
                 "9WZDNCRFJ4Q7"
                 "Beeper.Beeper"
                 "Discord.Discord"
+                "Microsoft.Teams"
                 "Rambox.Rambox.Community"
                 "Telegram.TelegramDesktop"
                 "XPDC2RH70K22MN"
@@ -355,6 +378,7 @@ $data_winget = [PSCustomObject]@{
                 "LocalSend.LocalSend"
                 "MartiCliment.UniGetUI"
                 "Mega.MEGASync"
+                "Microsoft.OneDrive"
                 "Microsoft.PowerToys"
                 "MilosParipovic.OneCommander"
                 "Paragon.ParagonBackupRecoveryCE"
