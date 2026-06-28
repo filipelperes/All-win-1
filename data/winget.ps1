@@ -133,6 +133,7 @@ $data_winget = [PSCustomObject]@{
                 "Postman.Postman"
                 "Python.Python.3.11"
                 "Python.Python.3.12"
+                "9NQ7512CXL7T"
                 "rjpcomputing.luaforwindows"
                 "Rustlang.Rust.MSVC"
                 "Rustlang.Rustup"
