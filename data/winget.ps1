@@ -47,6 +47,7 @@ $data_winget = [PSCustomObject]@{
                 "EclipseFoundation.TheiaIDE"
                 "equalsraf.neovim-qt"
                 "Google.AntigravityIDE"
+                "Helix.Helix"
                 "JetBrains.Toolbox"
                 "lukehaas.RunJS"
                 "Microsoft.VisualStudio.2022.Community"
