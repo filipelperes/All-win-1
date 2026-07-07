@@ -342,6 +342,7 @@ $data_winget = [PSCustomObject]@{
             Notes = @(
                 "9NXQQ40LDW3X"
                 "9WZDNCRFJ3MB"
+                "Logseq.Logseq"
                 "Notion.Notion"
                 "Obsidian.Obsidian"
                 "ToEverything.AFFiNE"
