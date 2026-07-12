@@ -79,6 +79,7 @@ $data_winget = [PSCustomObject]@{
                 "Git.Git"
                 "GitHub.cli"
                 "GitHub.GitHubDesktop"
+                "JesseDuffield.lazygit"
                 "Microsoft.Git"
                 "SublimeHQ.SublimeMerge"
             )
