@@ -42,6 +42,7 @@ $data_winget = [PSCustomObject]@{
                 "Apache.NetBeans"
                 "ArduinoSA.CLI"
                 "ArduinoSA.IDE.stable"
+                "ByteDance.Trae"
                 "Codeblocks.Codeblocks"
                 "Codeium.Windsurf"
                 "EclipseFoundation.TheiaIDE"
@@ -123,6 +124,8 @@ $data_winget = [PSCustomObject]@{
                 "astral-sh.uv"
                 "Canonical.Ubuntu"
                 "Cygwin.Cygwin"
+                "davidegiacometti.EdgeFavoritesForCmdPal"
+                "davidegiacometti.VisualStudioForCmdPal"
                 "DEVCOM.Lua"
                 "DEVCOM.LuaJIT"
                 "Docker.DockerCLI"
@@ -211,6 +214,7 @@ $data_winget = [PSCustomObject]@{
                 "9WZDNCRFJ3B4"
             )
             Browsers = @(
+                "9N74NHXCH1N6"
                 "9NVN9SZ8KFD7"
                 "Ablaze.Floorp"
                 "Ablaze.Floorp.Daylight"
@@ -218,6 +222,8 @@ $data_winget = [PSCustomObject]@{
                 "Alex313031.Thorium"
                 "Apple.Safari"
                 "Brave.Brave"
+                "DuckDuckGo.DesktopBrowser"
+                "DuckDuckGo.DesktopBrowser.Preview"
                 "eloston.ungoogled-chromium"
                 "Ghostery.GhosteryDawn"
                 "Google.Chrome"
@@ -245,6 +251,8 @@ $data_winget = [PSCustomObject]@{
                 "Yandex.Browser"
                 "Zen-Team.Zen-Browser"
                 "Zen-Team.Zen-Browser.Twilight"
+                "Perplexity.Comet"
+                "XPFFVLPJRVQTKM"
             )
             "Color Picker" = @(
                 "martinchrzan.ColorPicker"
@@ -290,6 +298,11 @@ $data_winget = [PSCustomObject]@{
                 "9PF94J2D9F6X"
                 "Alibaba.Qwen"
                 "Anthropic.Claude"
+                "ByteDance.Dola"
+                "ByteDance.Doubao"
+                "kangfenmao.CherryStudio"
+                "Perplexity.Perplexity"
+                "XP8JNQFBQH6PVF"
                 "XP9CXNGPPJ97XX"
             )
             "Image Editor" = @(
@@ -392,6 +405,7 @@ $data_winget = [PSCustomObject]@{
                 "XPFCC4CD725961"
                 "XPFM5P5KDWF0JP"
                 "Zoom.Zoom"
+                "XPFD8TKWZDH43M"
             )
             Themes = @(
                 "9P3JFPWWDZRC"
