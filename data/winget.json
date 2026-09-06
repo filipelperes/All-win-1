@@ -130,6 +130,7 @@
                 "DEVCOM.LuaJIT",
                 "Docker.DockerCLI",
                 "Docker.DockerDesktop",
+                "JesseDuffield.Lazydocker",
                 "Erlang.ErlangOTP",
                 "Figma.Figma",
                 "GoLang.Go",
@@ -274,6 +275,7 @@
             "Email": [
                 "9NRX63209R7B",
                 "9PM5VM1S3VMQ",
+                "Microsoft.Outlook",
                 "Mozilla.Thunderbird",
                 "Proton.ProtonMail",
                 "Proton.ProtonMailBridge"
@@ -290,6 +292,7 @@
             ],
             "Games": [
                 "BlueStack.BlueStacks",
+                "MedalB.V.Medal",
                 "RiotGames.LeagueOfLegends.BR",
                 "Valve.Steam",
                 "XP99VRNQHM80FC"
@@ -301,6 +304,7 @@
                 "ByteDance.Dola",
                 "ByteDance.Doubao",
                 "kangfenmao.CherryStudio",
+                "Microsoft.365Copilot",
                 "Perplexity.Perplexity",
                 "XP8JNQFBQH6PVF",
                 "XP9CXNGPPJ97XX"
