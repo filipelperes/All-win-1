@@ -343,6 +343,7 @@ $data_winget = [PSCustomObject]@{
                 "HandBrake.HandBrake"
                 "OBSProject.OBSStudio"
                 "OpenMedia.4KVideoDownloaderPlus"
+                "shinchiro.mpv"
                 "VideoLAN.VLC"
                 "Vysor.Vysor"
                 "XP8JK4TBQ03LZ4"
